@@ -1,0 +1,53 @@
+Changes in Version 0.99.4 (2017-06-08)
+=====================================
+
+* Switch from parallel to BiocParallel
+* Improvements to code efficiency, e.g., avoid copying ZinbModel objects
+
+Changes in Version 0.99.3 (2017-05-31)
+=====================================
+
+* More informative Description: field
+* Improved documentation
+* Added getAlpha, getBeta, and getGamma accessor functions
+* Improved show() method
+* Vectorized code in zinbSim()
+* Fixed bug that introduced an error when initializing an object with empty X or V
+* Added tests on numerical correctness
+
+Changes in Version 0.99.2 (2017-05-12)
+=====================================
+
+* New formula interface for SummarizedExperiment
+* Add t-SNE example to vignette
+
+Changes in Version 0.99.0 (2017-05-09)
+=====================================
+
+* Bumped version for submission to Bioconductor
+* Minor changes to compile vignette
+* Required R version 3.4
+
+Changes in Version 0.1.4 (2017-04-10)
+=====================================
+
+* Improved documentation
+* zinbSim now produces matrix of J x n dimension
+* Removed unnecessary dependency on clusterExperiment
+* Additional tests
+* Better default for epsilon
+
+Changes in Version 0.1.2 (2017-03-29)
+=====================================
+
+* New vignette
+* Change name to zinbwave
+
+Changes in Version 0.1.0 (2016-09-23)
+=====================================
+
+* Introducing S4 class zinbModel
+* Major restructuring of the initialization and optimization (see vignette)
+* Method zinbFit to fit a model
+* Many other methods, including zinbInitialize, zinbOptimize, zinbSim
+

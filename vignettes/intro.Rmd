@@ -1,0 +1,231 @@
+---
+title: "An introduction to ZINB-WaVE"
+author: "Davide Risso"
+date: "Last modified: May 12, 2017; Compiled: `r format(Sys.time(), '%B %d, %Y')`"
+bibliography: biblio.bib
+output:
+  BiocStyle::html_document:
+    toc: true
+vignette: >
+  %\VignetteEncoding{UTF-8}
+---
+
+<!--
+%\VignetteEngine{knitr::rmarkdown}
+%\VignetteIndexEntry{zinbwave Vignette}
+-->
+
+# Introduction
+
+```{r options, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(warning=FALSE, error=FALSE, message=FALSE)
+
+library(zinbwave)
+library(scRNAseq)
+library(matrixStats)
+library(magrittr)
+library(ggplot2)
+library(biomaRt)
+
+# Register BiocParallel Serial Execution
+BiocParallel::register(BiocParallel::SerialParam())
+```
+
+This vignette provides an introductory example on how to work with the `zinbwave`
+package, which implements the ZINB-WaVE method proposed in [@risso2017].
+
+## The ZINB-WaVE model
+
+ZINB-WaVE is a general and flexible model for the analysis of high-dimensional zero-inflated count data, such as those recorded in single-cell RNA-seq assays. Given \(n\) samples (typically, \(n\) single cells) and \(J\) features (typically, \(J\) genes) that can be counted for each sample, we denote with \(Y_{ij}\) the count of feature \(j\) (\(j=1,\ldots,J\)) for sample \(i\) (\(i=1,\ldots,n\)). To account for various technical and
+biological effects, typical of single-cell sequencing
+technologies, we model \(Y_{ij}\) as a random variable following a zero-inflated negative binomial (ZINB) distribution with parameters \(\mu_{ij}\), \(\theta_{ij}\), and
+\(\pi_{ij}\), and consider the following regression models for the parameters:
+
+\begin{align}
+\label{eq:model1}
+\ln(\mu_{ij}) &= \left( X\beta_\mu + (V\gamma_\mu)^\top + W\alpha_\mu + O_\mu\right)_{ij}\,,\\
+\label{eq:model2}
+\text{logit}(\pi_{ij}) &= \left(X\beta_\pi + (V\gamma_\pi)^\top + W\alpha_\pi + O_\pi\right)_{ij} \,, \\
+\label{eq:model3}
+\ln(\theta_{ij}) &= \zeta_j \,,
+\end{align}.
+
+where the elements of the regression models are as follows.
+
+- $X$ is a known $n \times M$ matrix corresponding to $M$ cell-level covariates and ${\bf \beta}=(\beta_\mu,\beta_\pi)$ its associated $M \times J$ matrices of regression parameters. $X$ can typically include covariates that induce variation of interest, such as cell types, or covariates that induce unwanted variation, such as batch or quality control (QC) measures. By default, it includes only a constant column of ones, ${\bf 1}_n$, to account for gene-specific intercepts.
+- $V$ is a known $J \times L$ matrix corresponding to $J$ gene-level covariates, such as gene length or GC-content, and ${\bf \gamma} = (\gamma_\mu , \gamma_\pi)$ its associated $L\times n$ matrices of regression parameters. By default, $V$ only includes a constant column of ones, ${\bf 1}_J$, to account for cell-specific intercepts, such as size factors representing differences in library sizes.
+- $W$ is an unobserved $n \times K$ matrix corresponding to $K$ unknown cell-level covariates, which could be of "unwanted variation" or of interest (such as cell type), and ${\bf \alpha} = (\alpha_\mu,\alpha_{\pi})$ its associated $K \times J$ matrices of regression parameters.
+- $O_\mu$ and $O_\pi$ are known $n \times J$ matrices of offsets.
+- $\zeta\in\mathbb{R}^J$ is a vector of gene-specific dispersion parameters on the log scale.
+
+## Example dataset
+
+To illustrate the methodology, we will make use of the Fluidigm C1 dataset of
+[@Pollen2014]. The data consist of 65 cells, each sequenced at high and low depth.
+The data are publicly available as part of the [scRNAseq package](https://www.bioconductor.org/packages/release/data/experiment/html/scRNAseq.html), in the form of a `SummarizedExperiment` object.
+
+```{r pollen}
+data("fluidigm")
+fluidigm
+
+table(colData(fluidigm)$Coverage_Type)
+```
+
+# Gene filtering
+
+First, we filter out the lowly expressed genes, by removing those genes that do
+not have at least 5 reads in at least 5 samples.
+
+```{r filter}
+filter <- rowSums(assay(fluidigm)>5)>5
+table(filter)
+
+fluidigm <- fluidigm[filter,]
+```
+
+This leaves us with `r sum(filter)` genes.
+
+We next identify the 100 most variable genes, which will be the input of our
+ZINB-WaVE procedure. Although we apply ZINB-WaVE to only these genes primarily
+for computational reasons, it is generally a good idea to focus on a subset of
+highly-variable genes, in order to remove transcriptional noise and focus on the
+more biologically meaningful signals. However, at least 1,000 genes are probably
+needed for real analyses.
+
+```{r variance}
+assay(fluidigm) %>% log1p %>% rowVars -> vars
+names(vars) <- rownames(fluidigm)
+vars <- sort(vars, decreasing = TRUE)
+head(vars)
+
+fluidigm <- fluidigm[names(vars)[1:100],]
+```
+
+# ZINB-WaVE
+
+We can now apply the `zinbFit` function to our reduced gene expression matrix,
+to fit the ZINB model. Note that we use only one CPU here, but one can select
+the number of cores with the option `ncore`, to speed up computations.
+
+```{r zinb}
+zinb <- zinbFit(fluidigm, K=2, epsilon=1000)
+```
+
+By default, the `zinbFit` function fits a ZINB model with $X = {\bf 1}_n$ and $V = {\bf 1}_J$. In this case, the model is a factor model akin to principal component analysis (PCA), where $W$ is a factor matrix and $\alpha_\mu$ and $\alpha_\pi$ are loading matrices. 
+By default, the `epsilon` parameter is set to the number of genes. We empirically 
+found that a high `epsilon` is often required to obtained a good low-level 
+representation. See `?zinbModel` for details. Here we set `epsilon=1000`.
+
+The parameter $K$ controls how many latent variables we want to infer
+from the data. In this case, as we specified $K=2$, we can visualize the resulting $W$ matrix in a simple plot, color-coded by cell-type.
+
+```{r zinb_plot}
+W <- getW(zinb)
+colnames(W) <- paste0("W", 1:2)
+
+data.frame(W, bio=colData(fluidigm)$Biological_Condition,
+           coverage=colData(fluidigm)$Coverage_Type) %>%
+    ggplot(aes(W1, W2, colour=bio, shape=coverage)) + geom_point() + 
+    scale_color_brewer(type = "qual", palette = "Set1") + theme_classic()
+```
+
+## Adding covariates
+
+The ZINB-WaVE model is more general than PCA, allowing the inclusion of additional sample and gene-level covariates that might help to infer the unknown factors.
+
+### Sample-level covariates
+
+Typically, one could include batch information as sample-level covariate, to
+account for batch effects. Here, we illustrate this capability by including the coverage (high or low) as a sample-level covariate.
+
+The column `Coverage_Type` in the `colData` of `fluidigm` contains the coverage information. We can specify a design matrix that includes an intercept and an indicator
+variable for the coverage, by using the formula interface of `zinbFit`.
+
+```{r zinb_coverage}
+zinb_cov <- zinbFit(fluidigm, K=2, X="~Coverage_Type", epsilon=1000)
+```
+
+```{r zinb_plot2}
+W <- getW(zinb_cov)
+colnames(W) <- paste0("W", 1:2)
+
+data.frame(W, bio=colData(fluidigm)$Biological_Condition,
+           coverage=colData(fluidigm)$Coverage_Type) %>%
+    ggplot(aes(W1, W2, colour=bio, shape=coverage)) + geom_point() + 
+    scale_color_brewer(type = "qual", palette = "Set1") + theme_classic()
+```
+
+In this case, the inferred $W$ matrix is essentially the same with or without
+covariates, indicating that the scaling factor included in the model (the $\gamma$ parameters associated with the intercept of $V$) are enough to achieve a good low-dimensional representation of the data.
+
+### Gene-level covariates
+
+Analogously, we can include gene-level covariates, as columns of $V$. Here, we 
+illustrate this capability by including gene length and GC-content.
+
+We use the `biomaRt` package to compute gene length and GC-content.
+
+```{r gcc}
+mart <- useMart("ensembl")
+mart <- useDataset("hsapiens_gene_ensembl", mart = mart)
+bm <- getBM(attributes=c('hgnc_symbol', 'start_position',
+                         'end_position', 'percentage_gene_gc_content'),
+            filters = 'hgnc_symbol',
+            values = rownames(fluidigm),
+            mart = mart)
+
+bm$length <- bm$end_position - bm$start_position
+len <- tapply(bm$length, bm$hgnc_symbol, mean)
+len <- len[rownames(fluidigm)]
+gcc <- tapply(bm$percentage_gene_gc_content, bm$hgnc_symbol, mean)
+gcc <- gcc[rownames(fluidigm)]
+```
+
+We then include the gene-level information as `rowData` in the `fluidigm` object.
+
+```{r rowdata}
+rowData(fluidigm) <- data.frame(gccontent = gcc, length = len)
+```
+
+```{r zinb_gcc}
+zinb_gcc <- zinbFit(fluidigm, K=2, V="~gccontent + log(length)", epsilon=1000)
+```
+
+```{r zinb_plot3}
+W <- getW(zinb_gcc)
+colnames(W) <- paste0("W", 1:2)
+
+data.frame(W, bio=colData(fluidigm)$Biological_Condition,
+           coverage=colData(fluidigm)$Coverage_Type) %>%
+    ggplot(aes(W1, W2, colour=bio, shape=coverage)) + geom_point() + 
+    scale_color_brewer(type = "qual", palette = "Set1") + theme_classic()
+```
+
+# t-SNE representation
+
+A t-SNE representation of the data can be obtained by computing the cell distances
+in the reduced space and running the t-SNE algorithm on the distance.
+
+```{r tsne}
+set.seed(93024)
+
+library(Rtsne)
+d <- dist(getW(zinb_gcc))
+tsne_data <- Rtsne(d, is_distance = TRUE, pca = FALSE, 
+                   perplexity=10, max_iter=5000)
+
+data.frame(Dim1=tsne_data$Y[,1], Dim2=tsne_data$Y[,2], 
+           bio=colData(fluidigm)$Biological_Condition,
+           coverage=colData(fluidigm)$Coverage_Type) %>%
+    ggplot(aes(Dim1, Dim2, colour=bio, shape=coverage)) + geom_point() + 
+    scale_color_brewer(type = "qual", palette = "Set1") + theme_classic()
+```
+
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
+
+# References

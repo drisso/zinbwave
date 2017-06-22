@@ -1,0 +1,14 @@
+bibentry("Article",
+         title = "{ZINB-WaVE}: A general and flexible method for signal extraction from single-cell {RNA}-seq data",
+         author = c(person("Davide", "Risso"),
+                    person("Fanny", "Perraudeau"),
+                    person("Svetlana", "Gribkova"),
+                    person("Sandrine", "Dudoit"),
+                    person("Jean-Philippe", "Vert")),
+         year = 2017,
+         journal = "bioRxiv",
+         url = "https://doi.org/10.1101/125112",
+         textVersion = 
+         paste("D. Risso, F. Perraudeau, S. Gribkova, S. Dudoit and JP. Vert","(2017).",
+               "ZINB-WaVE: A general and flexible method for signal extraction from single-cell RNA-seq data. bioRxiv. https://doi.org/10.1101/125112")
+               )
