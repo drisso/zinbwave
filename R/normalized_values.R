@@ -32,7 +32,12 @@ zinb.loglik.matrix <- function(model, x) {
 #' @export
 #' @return the matrix of deviance residuals of the model.
 computeDevianceResiduals <- function(model, x, ignoreW = TRUE) {
-    if (ignoreW) model@W <- matrix(0, ncol = nFactors(model), nrow = nSamples(model))
+
+    # this makes a copy of "model" -- is there a more efficient way?
+    if (ignoreW) {
+        model@W <- matrix(0, ncol = nFactors(model), nrow = nSamples(model))
+    }
+
     mu_hat <- getMu(model)
     pi_hat <- getPi(model)
     x_hat <- (1 - pi_hat) * mu_hat
@@ -126,20 +131,23 @@ setMethod("zinbDimRed", "SummarizedExperiment",
               # and deviance residuals can be added to the list of assays and
               # the W has been added to the colData matrix if K > 0
               if (normalizedValues){
-                  norm <- computeDevianceResiduals(res, t(assay(Y)), ignoreW = T)
-                  assays(Y)[['normalizedValues']] <- t(norm)
+                  norm <- computeDevianceResiduals(res, t(assay(Y)),
+                                                   ignoreW = TRUE)
+                  assay(Y, "normalizedValues") <- t(norm)
               }
 
               if (residuals){
-                  devres <- computeDevianceResiduals(res, t(assay(Y)), ignoreW = F)
-                  assays(Y)[['residuals']] <- t(devres)
+                  devres <- computeDevianceResiduals(res, t(assay(Y)),
+                                                     ignoreW = FALSE)
+                  assay(Y, "residuals") <- t(devres)
               }
 
               if (imputedValues){
                   imputed <- imputeZeros(res, t(assay(Y)))
-                  assays(Y)[['imputedValues']] <- t(imputed)
+                  assay(Y, "imputedValues") <- t(imputed)
               }
 
+              # This will be changed when/if we switch to SingleCellExperiment
               if (nFactors(res) > 0){
                   W <- data.frame(getW(res))
                   colnames(W) <- paste0('W', seq_len(nFactors(res)))
