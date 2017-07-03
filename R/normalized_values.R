@@ -12,11 +12,11 @@
 #' @return the matrix of log-likelihood of the model.
 #' @importFrom stats dnbinom
 zinb.loglik.matrix <- function(model, x) {
-    mu <- t(getMu(model))
+    mu <- getMu(model)
     theta <- getTheta(model)
-    theta_mat <- matrix(rep(theta, ncol(x), ncol = ncol(x)))
-    pi <- t(getPi(model))
-    log( pi * (x == 0) + (1 - pi) * dnbinom(x, size = theta, mu = mu) )
+    theta_mat <- matrix(rep(theta, each = nrow(x)), ncol = ncol(x))
+    pi <- getPi(model)
+    log( pi * (x == 0) + (1 - pi) * dnbinom(x, size = theta_mat, mu = mu) )
 }
 
 
@@ -27,14 +27,14 @@ zinb.loglik.matrix <- function(model, x) {
 #' (ZINB) model.
 #'
 #' @param model the zinb model
-#' @param x the matrix of counts
+#' @param x the matrix of counts n cells by J genes
 #' @param ignoreW logical, if true matrix \code{W} is ignored. Default is TRUE.
 #' @export
 #' @return the matrix of deviance residuals of the model.
 computeDevianceResiduals <- function(model, x, ignoreW = TRUE) {
     if (ignoreW) model@W <- matrix(0, ncol = nFactors(model), nrow = nSamples(model))
-    mu_hat <- t(getMu(model))
-    pi_hat <- t(getPi(model))
+    mu_hat <- getMu(model)
+    pi_hat <- getPi(model)
     x_hat <- (1 - pi_hat) * mu_hat
     ll <- zinb.loglik.matrix(model, x)
     sign <- 1*(x - x_hat > 0)
@@ -103,13 +103,13 @@ setMethod("zinbDimRed", "SummarizedExperiment",
               # and deviance residuals can be added to the list of assays and
               # the W has been added to the colData matrix if K > 0
               if (normalizedValues){
-                  norm <- computeDevianceResiduals(res, assay(Y), ignoreW = T)
-                  assays(Y)[['normalizedValues']] <- norm
+                  norm <- computeDevianceResiduals(res, t(assay(Y)), ignoreW = T)
+                  assays(Y)[['normalizedValues']] <- t(norm)
               }
 
               if (residuals){
-                  devres <- computeDevianceResiduals(res, assay(Y), ignoreW = F)
-                  assays(Y)[['residuals']] <- devres
+                  devres <- computeDevianceResiduals(res, t(assay(Y)), ignoreW = F)
+                  assays(Y)[['residuals']] <- t(devres)
               }
 
               if (nFactors(res) > 0){
