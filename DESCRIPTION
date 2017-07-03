@@ -1,12 +1,14 @@
 Package: zinbwave
 Type: Package
 Title: Zero-Inflated Negative Binomial Model for RNA-Seq Data
-Version: 0.99.4.2
+Version: 0.99.5
 Authors@R: 
     c(person("Davide","Risso", role=c("aut","cre", "cph"), 
           email="risso.davide@gmail.com" ),
       person("Svetlana","Gribkova", role="aut", 
           email="svetlana.gribkova@mines-paristech.fr"),
+      person("Fanny", "Perraudeau", role="aut",
+          email="fperraudeau@berkeley.edu"),
       person("Jean-Philippe", "Vert", role="aut", 
           email="jean-philippe.vert@mines-paristech.fr"))
 Description: 
