@@ -68,7 +68,7 @@ imputeZeros <- function(model, x) {
 
 
 
-#' @describeIn zinbDimRed Y is a
+#' @describeIn zinbwave Y is a
 #'   \code{\link[SummarizedExperiment]{SummarizedExperiment}}.
 #' @export
 #'
@@ -99,7 +99,6 @@ imputeZeros <- function(model, x) {
 #' of the ZINB model. Deviance residuals are computed.
 #' @param imputedValues indicates wether or not you want to compute the imputed
 #' counts of the ZINB model.
-
 #'
 #' @details For visualization (heatmaps, ...), please use the normalized values.
 #' It corresponds to the deviance residuals when the \code{W} is not included
@@ -113,8 +112,8 @@ imputeZeros <- function(model, x) {
 #' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
 #'                            colData = data.frame(bio = gl(2, 3)))
 #'
-#' m <- zinbDimRed(se, X=model.matrix(~bio, data=colData(se)))
-setMethod("zinbDimRed", "SummarizedExperiment",
+#' m <- zinbwave(se, X=model.matrix(~bio, data=colData(se)))
+setMethod("zinbwave", "SummarizedExperiment",
           function(Y, X, V, commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,

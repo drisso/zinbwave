@@ -483,4 +483,4 @@ setGeneric(
 #' reduced matrix has been added to colData and optionally normalized values
 #' have been added in the list of assays.
 #' @export
-setGeneric("zinbDimRed", function(Y, ...) standardGeneric("zinbDimRed"))
+setGeneric("zinbwave", function(Y, ...) standardGeneric("zinbwave"))
