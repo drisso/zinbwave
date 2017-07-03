@@ -42,6 +42,25 @@ computeDevianceResiduals <- function(model, x, ignoreW = TRUE) {
     sign * sqrt(-2 * ll)
 }
 
+#' Impute the zeros using the estimated parameters from the ZINB model.
+#'
+#' Given a matrix of counts and a zinb model, this function computes the
+#' imputed counts under a zero-inflated negative binomial
+#' (ZINB) model.
+#'
+#' @param model the zinb model
+#' @param x the matrix of counts n cells by J genes
+#' @export
+#' @return the matrix of imputed counts.
+imputeZeros <- function(model, x) {
+    mu <- getMu(model)
+    pi <- getPi(model)
+    phi <- getPhi(model)
+    imputedZero <- (mu * pi) / (pi + (1 - pi) * t((1 + t(mu) * phi)^(- 1/ phi)))
+    x[x == 0] <- imputedZero[x == 0]
+    x
+}
+
 
 
 #' @describeIn zinbDimRed Y is a
@@ -73,6 +92,9 @@ computeDevianceResiduals <- function(model, x, ignoreW = TRUE) {
 #' covariates.
 #' @param residuals indicates wether or not you want to compute the residuals
 #' of the ZINB model. Deviance residuals are computed.
+#' @param imputedValues indicates wether or not you want to compute the imputed
+#' counts of the ZINB model.
+
 #'
 #' @details For visualization (heatmaps, ...), please use the normalized values.
 #' It corresponds to the deviance residuals when the \code{W} is not included
@@ -92,7 +114,8 @@ setMethod("zinbDimRed", "SummarizedExperiment",
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(),
-                   normalizedValues = TRUE, residuals = FALSE, ...) {
+                   normalizedValues = TRUE, residuals = FALSE,
+                   imputedValues = FALSE, ...) {
 
               res <- zinbFit(Y, X, V, commondispersion,
                              verbose, nb.repeat.initialize, maxiter.optimize,
@@ -110,6 +133,11 @@ setMethod("zinbDimRed", "SummarizedExperiment",
               if (residuals){
                   devres <- computeDevianceResiduals(res, t(assay(Y)), ignoreW = F)
                   assays(Y)[['residuals']] <- t(devres)
+              }
+
+              if (imputedValues){
+                  imputed <- imputeZeros(res, t(assay(Y)))
+                  assays(Y)[['imputedValues']] <- t(imputed)
               }
 
               if (nFactors(res) > 0){

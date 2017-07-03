@@ -9,7 +9,7 @@ computeDevianceResiduals(model, x, ignoreW = TRUE)
 \arguments{
 \item{model}{the zinb model}
 
-\item{x}{the matrix of counts}
+\item{x}{the matrix of counts n cells by J genes}
 
 \item{ignoreW}{logical, if true matrix \code{W} is ignored. Default is TRUE.}
 }

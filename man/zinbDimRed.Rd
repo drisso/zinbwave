@@ -12,7 +12,7 @@ zinbDimRed(Y, ...)
 \S4method{zinbDimRed}{SummarizedExperiment}(Y, X, V, commondispersion = TRUE,
   verbose = FALSE, nb.repeat.initialize = 2, maxiter.optimize = 25,
   stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(),
-  normalizedValues = TRUE, residuals = FALSE, ...)
+  normalizedValues = TRUE, residuals = FALSE, imputedValues = FALSE, ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns).}
@@ -54,6 +54,9 @@ covariates.}
 
 \item{residuals}{indicates wether or not you want to compute the residuals
 of the ZINB model. Deviance residuals are computed.}
+
+\item{imputedValues}{indicates wether or not you want to compute the imputed
+counts of the ZINB model.}
 }
 \value{
 An object of class \code{SummarizedExperiment} where the dimensionality
