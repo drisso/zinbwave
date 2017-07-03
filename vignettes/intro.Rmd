@@ -1,7 +1,7 @@
 ---
 title: "An introduction to ZINB-WaVE"
 author: "Davide Risso"
-date: "Last modified: May 12, 2017; Compiled: `r format(Sys.time(), '%B %d, %Y')`"
+date: "Last modified: July 3, 2017; Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 bibliography: biblio.bib
 output:
   BiocStyle::html_document:
@@ -15,11 +15,29 @@ vignette: >
 %\VignetteIndexEntry{zinbwave Vignette}
 -->
 
+# Installation
+
+The recommended way to install the `zinbwave` package is via Bioconductor.
+
+```{r, eval=FALSE}
+source("https://bioconductor.org/biocLite.R")
+biocLite("zinbwave")
+```
+
+Note that `zinbwave` requires R (>=3.4) and Bioconductor (>=3.6).
+
 # Introduction
 
 ```{r options, include=FALSE, echo=FALSE}
 knitr::opts_chunk$set(warning=FALSE, error=FALSE, message=FALSE)
+```
 
+This vignette provides an introductory example on how to work with the `zinbwave`
+package, which implements the ZINB-WaVE method proposed in [@risso2017].
+
+First, let's load the packages and set serial computations.
+
+```{r load_packs}
 library(zinbwave)
 library(scRNAseq)
 library(matrixStats)
@@ -30,9 +48,6 @@ library(biomaRt)
 # Register BiocParallel Serial Execution
 BiocParallel::register(BiocParallel::SerialParam())
 ```
-
-This vignette provides an introductory example on how to work with the `zinbwave`
-package, which implements the ZINB-WaVE method proposed in [@risso2017].
 
 ## The ZINB-WaVE model
 
@@ -104,8 +119,7 @@ fluidigm <- fluidigm[names(vars)[1:100],]
 # ZINB-WaVE
 
 We can now apply the `zinbFit` function to our reduced gene expression matrix,
-to fit the ZINB model. Note that we use only one CPU here, but one can select
-the number of cores with the option `ncore`, to speed up computations.
+to fit the ZINB model.
 
 ```{r zinb}
 zinb <- zinbFit(fluidigm, K=2, epsilon=1000)
@@ -221,6 +235,46 @@ data.frame(Dim1=tsne_data$Y[,1], Dim2=tsne_data$Y[,2],
     scale_color_brewer(type = "qual", palette = "Set1") + theme_classic()
 ```
 
+# Normalized values and deviance residuals
+
+Sometimes it is useful to have normalized values for visualization and residuals
+for model evaluation. Both quantities can be computed with the `zinbwave()` 
+function, which will return a `SummarizedExperiment` object with the W matrix,
+and optionally the residuals and normalized values.
+
+```{r zinbwave, eval=FALSE}
+se_norm <- zinbwave(fluidigm, K=2, epsilon=1000, normalizedValues=TRUE,
+                    residuals = TRUE)
+```
+
+If one has already fitted a model with `zinbFit` the resulting `ZinbModel`
+object can be passed to `zinbwave` to avoid repeating the same computations.
+
+```{r zinbwave2}
+se_norm <- zinbwave(fluidigm, fitted_model=zinb, normalizedValues=TRUE,
+                    residuals = TRUE)
+```
+
+# A note on performance and parallel computing
+
+The `zinbwave` package uses the `BiocParallel` package to allow for parallel
+computing. Here, we used the `register` command
+to ensure that the vignette runs with serial computations.
+
+However, in real datasets, parallel computations can speed up the computations 
+dramatically, in the presence of many genes and/or many cells. 
+
+There are two ways of allowing parallel computations in `zinbwave`. The first is
+to `register()` a parallel back-end (see `?BiocParallel::register` for details).
+Alternatively, one can pass a `BPPARAM` object to `zinbwave` and `zinbFit`, e.g.
+
+```{r, eval=FALSE}
+library(BiocParallel)
+zinb_res <- zinbFit(fluidigm, K=2, BPPARAM=MulticoreParam(2))
+```
+
+We found that `MulticoreParam()` may have some performance issues on Mac; hence,
+we recommend `DoparParam()` when working on Mac.
 
 # Session Info
 
