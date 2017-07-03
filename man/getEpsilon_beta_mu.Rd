@@ -20,5 +20,5 @@ associated to each row.
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getEpsilon_beta_mu(a) 
+getEpsilon_beta_mu(a)
 }

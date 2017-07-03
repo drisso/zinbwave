@@ -14,11 +14,11 @@ distributions.}
 the vector \code{zeta} of log of inverse dispersion parameters
 }
 \description{
-Given an object that describes a matrix of zero-inflated negative binomial 
-distributions, returns the vector \code{zeta} of log of inverse dispersion 
+Given an object that describes a matrix of zero-inflated negative binomial
+distributions, returns the vector \code{zeta} of log of inverse dispersion
 parameters
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getZeta(a) 
+getZeta(a)
 }

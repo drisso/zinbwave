@@ -21,5 +21,5 @@ returns the matrix of parameters associated with V_mu
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getGamma_mu(a) 
+getGamma_mu(a)
 }

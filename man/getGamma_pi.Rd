@@ -21,5 +21,5 @@ returns the matrix of parameters associated with V_pi
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getGamma_pi(a) 
+getGamma_pi(a)
 }

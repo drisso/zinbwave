@@ -14,10 +14,10 @@ distributions.}
 the regularization parameters for \code{zeta}.
 }
 \description{
-The regularization parameter penalizes the variance of zeta, the log of 
+The regularization parameter penalizes the variance of zeta, the log of
 the dispersion parameters across samples.
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getEpsilon_zeta(a) 
+getEpsilon_zeta(a)
 }

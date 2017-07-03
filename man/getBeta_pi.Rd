@@ -21,5 +21,5 @@ returns the matrix of parameters associated with X_pi
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getBeta_pi(a) 
+getBeta_pi(a)
 }

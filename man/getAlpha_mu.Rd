@@ -21,5 +21,5 @@ returns the matrix of parameters associated with W for the mean part (mu)
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getAlpha_mu(a) 
+getAlpha_mu(a)
 }

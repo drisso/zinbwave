@@ -21,5 +21,5 @@ returns the matrix of parameters associated with X_mu
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getBeta_mu(a) 
+getBeta_mu(a)
 }

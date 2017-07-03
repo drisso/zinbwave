@@ -40,5 +40,5 @@ simulate counts from the distribution.
 
 \examples{
 a <- zinbModel(n=5, J=10)
-zinbSim(a) 
+zinbSim(a)
 }

@@ -21,5 +21,5 @@ returns the matrix of parameters associated with W for the zero part (pi)
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getAlpha_pi(a) 
+getAlpha_pi(a)
 }

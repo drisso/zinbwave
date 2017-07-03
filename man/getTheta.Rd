@@ -14,11 +14,11 @@ distributions.}
 the vector of inverse dispersion parameters theta
 }
 \description{
-Given an object that describes a matrix of zero-inflated negative binomial 
+Given an object that describes a matrix of zero-inflated negative binomial
 distributions, returns the vector of inverse dispersion parameters
 \code{theta}.
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getTheta(a) 
+getTheta(a)
 }

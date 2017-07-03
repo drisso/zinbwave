@@ -14,11 +14,11 @@ distributions.}
 the regularization parameters for \code{W}.
 }
 \description{
-Given an object describing a ZINB model, returns a vector of size the number 
+Given an object describing a ZINB model, returns a vector of size the number
 of columns in the parameter \code{W} with the regularization
 parameters associated to each column.
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getEpsilon_W(a) 
+getEpsilon_W(a)
 }

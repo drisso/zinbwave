@@ -19,5 +19,5 @@ distributions, returns the vector of dispersion parameters \code{phi}.
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getPhi(a) 
+getPhi(a)
 }

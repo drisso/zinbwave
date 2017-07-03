@@ -20,5 +20,5 @@ covariates.
 }
 \examples{
 a <- zinbModel(n=5, J=10)
-getW(a) 
+getW(a)
 }
