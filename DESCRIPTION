@@ -18,7 +18,7 @@ Description:
    and/or other covariates, avoiding the need for pre-normalize the data.
 License: Artistic-2.0
 Depends: 
-   R (>= 3.3),
+   R (>= 3.4),
    methods,
    SummarizedExperiment
 Imports:
