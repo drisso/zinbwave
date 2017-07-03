@@ -80,6 +80,7 @@ imputeZeros <- function(model, x) {
 #'   per row. If missing, V will contain only an intercept. If Y is a
 #'   SummarizedExperiment object, V can be a formula using the variables in the
 #'   rowData slot of Y.
+#' @param fitted_model a \code{\link{ZinbModel}} object.
 #' @param commondispersion Whether or not a single dispersion for all features
 #'   is estimated (default TRUE).
 #' @param BPPARAM object of class \code{bpparamClass} that specifies the
@@ -106,61 +107,61 @@ imputeZeros <- function(model, x) {
 #' \code{W} is not included in the model, the deviance residuals should capture
 #' the biology.
 #'
+#' @details If one has already fitted a model using \code{\link{ZinbModel}},
+#' the object containing such model can be used as input of \code{zinbwave} to
+#' save the resulting W into a \code{SummarizedExperiment} and optionally
+#' compute residuals and normalized values, without the need for re-fitting the
+#' model.
+#'
 #' @import SummarizedExperiment
 #'
 #' @examples
 #' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
 #'                            colData = data.frame(bio = gl(2, 3)))
 #'
-#' m <- zinbwave(se, X=model.matrix(~bio, data=colData(se)))
+#' m <- zinbwave(se, X="~bio")
 setMethod("zinbwave", "SummarizedExperiment",
-          function(Y, X, V, commondispersion=TRUE, verbose=FALSE,
+          function(Y, X, V, fitted_model, commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(),
                    normalizedValues = TRUE, residuals = FALSE,
                    imputedValues = FALSE, ...) {
 
-              res <- zinbFit(Y, X, V, commondispersion,
-                             verbose, nb.repeat.initialize, maxiter.optimize,
-                             stop.epsilon.optimize, BPPARAM, ...)
-
+              if(missing(fitted_model)) {
+                  fitted_model <- zinbFit(Y, X, V, commondispersion,
+                                          verbose, nb.repeat.initialize,
+                                          maxiter.optimize,
+                                          stop.epsilon.optimize, BPPARAM, ...)
+              }
 
               # Returns a summarizedExperiment object where normalized values
               # and deviance residuals can be added to the list of assays and
               # the W has been added to the colData matrix if K > 0
               if (normalizedValues){
-                  norm <- computeDevianceResiduals(res, t(assay(Y)),
+                  norm <- computeDevianceResiduals(fitted_model, t(assay(Y)),
                                                    ignoreW = TRUE)
                   assay(Y, "normalizedValues") <- t(norm)
               }
 
               if (residuals){
-                  devres <- computeDevianceResiduals(res, t(assay(Y)),
+                  devres <- computeDevianceResiduals(fitted_model, t(assay(Y)),
                                                      ignoreW = FALSE)
                   assay(Y, "residuals") <- t(devres)
               }
 
               if (imputedValues){
-                  imputed <- imputeZeros(res, t(assay(Y)))
+                  imputed <- imputeZeros(fitted_model, t(assay(Y)))
                   assay(Y, "imputedValues") <- t(imputed)
               }
 
               # This will be changed when/if we switch to SingleCellExperiment
-              if (nFactors(res) > 0){
-                  W <- data.frame(getW(res))
-                  colnames(W) <- paste0('W', seq_len(nFactors(res)))
+              if (nFactors(fitted_model) > 0){
+                  W <- data.frame(getW(fitted_model))
+                  colnames(W) <- paste0('W', seq_len(nFactors(fitted_model)))
                   colData(Y) <- cbind(colData(Y), W)
               }
 
               return(Y)
           }
 )
-
-
-
-
-
-
-
-

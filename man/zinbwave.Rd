@@ -9,10 +9,11 @@ gene and cell-level covariates.}
 \usage{
 zinbwave(Y, ...)
 
-\S4method{zinbwave}{SummarizedExperiment}(Y, X, V, commondispersion = TRUE,
-  verbose = FALSE, nb.repeat.initialize = 2, maxiter.optimize = 25,
-  stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(),
-  normalizedValues = TRUE, residuals = FALSE, imputedValues = FALSE, ...)
+\S4method{zinbwave}{SummarizedExperiment}(Y, X, V, fitted_model,
+  commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
+  maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
+  BPPARAM = BiocParallel::bpparam(), normalizedValues = TRUE,
+  residuals = FALSE, imputedValues = FALSE, ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns).}
@@ -29,6 +30,8 @@ colData slot of Y.}
 per row. If missing, V will contain only an intercept. If Y is a
 SummarizedExperiment object, V can be a formula using the variables in the
 rowData slot of Y.}
+
+\item{fitted_model}{a \code{\link{ZinbModel}} object.}
 
 \item{commondispersion}{Whether or not a single dispersion for all features
 is estimated (default TRUE).}
@@ -73,6 +76,12 @@ It corresponds to the deviance residuals when the \code{W} is not included
 in the model but the gene and cell-level covariates are. As a results, when
 \code{W} is not included in the model, the deviance residuals should capture
 the biology.
+
+If one has already fitted a model using \code{\link{ZinbModel}},
+the object containing such model can be used as input of \code{zinbwave} to
+save the resulting W into a \code{SummarizedExperiment} and optionally
+compute residuals and normalized values, without the need for re-fitting the
+model.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -84,5 +93,5 @@ the biology.
 se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                            colData = data.frame(bio = gl(2, 3)))
 
-m <- zinbwave(se, X=model.matrix(~bio, data=colData(se)))
+m <- zinbwave(se, X="~bio")
 }
