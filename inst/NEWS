@@ -1,3 +1,8 @@
+Changes in Version 0.99.6 (2017-07-05)
+=====================================
+
+* Fixed bug in zinb.loglik.matrix to avoid Inf values
+
 Changes in Version 0.99.5 (2017-07-03)
 =====================================
 
