@@ -16,7 +16,9 @@ zinb.loglik.matrix <- function(model, x) {
     theta <- getTheta(model)
     theta_mat <- matrix(rep(theta, each = nrow(x)), ncol = ncol(x))
     pi <- getPi(model)
-    log( pi * (x == 0) + (1 - pi) * dnbinom(x, size = theta_mat, mu = mu) )
+    lik <- pi * (x == 0) + (1 - pi) * dnbinom(x, size = theta_mat, mu = mu)
+    lik[lik == 0] <- min(lik[lik != 0]) #to avoid log lik to be infinite
+    log(lik)
 }
 
 
