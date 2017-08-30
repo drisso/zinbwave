@@ -95,6 +95,11 @@ setMethod("zinbFit", "matrix",
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(), ...) {
 
+    # Check that Y contains whole numbers
+    if(!all(.is_wholenumber(Y))) {
+        stop("The input matrix should contain only whole numbers.")
+    }
+
     # Transpose Y: UI wants genes in rows, internals genes in columns!
     Y <- t(Y)
 
@@ -995,4 +1000,8 @@ optimleft_fun <- function(i, gamma_mu, gamma_pi, W, Y, V_mu, alpha_mu,
            epsilon=epsilonleft,
            control=list(fnscale=-1,trace=0),
            method="BFGS")$par
+}
+
+.is_wholenumber <- function(x, tol = .Machine$double.eps^0.5) {
+    abs(x - round(x)) < tol
 }
