@@ -239,7 +239,7 @@ data.frame(Dim1=tsne_data$Y[,1], Dim2=tsne_data$Y[,2],
 
 Sometimes it is useful to have normalized values for visualization and residuals
 for model evaluation. Both quantities can be computed with the `zinbwave()` 
-function, which will return a `SummarizedExperiment` object with the W matrix,
+function, which will return a `SingleCellExperiment` object with the W matrix,
 and optionally the residuals and normalized values.
 
 ```{r zinbwave, eval=FALSE}
@@ -253,6 +253,18 @@ object can be passed to `zinbwave` to avoid repeating the same computations.
 ```{r zinbwave2}
 se_norm <- zinbwave(fluidigm, fitted_model=zinb, normalizedValues=TRUE,
                     residuals = TRUE)
+```
+
+The `se_norm` object includes normalized values and residuals as additional `assays`.
+
+```{r assays}
+se_norm
+```
+
+To retrieve the W matrix, we can use the `SingleCellExperiment` `reducedDim` method.
+
+```{r dimReduce}
+head(reducedDim(se_norm))
 ```
 
 # A note on performance and parallel computing

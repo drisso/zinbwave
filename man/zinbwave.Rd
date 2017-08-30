@@ -62,9 +62,9 @@ of the ZINB model. Deviance residuals are computed.}
 counts of the ZINB model.}
 }
 \value{
-An object of class \code{SummarizedExperiment} where the dimensionality
-reduced matrix has been added to colData and optionally normalized values
-have been added in the list of assays.
+An object of class \code{SingleCellExperiment}; the dimensionality
+  reduced matrix is stored in the \code{reducedDims} slot and optionally
+  normalized values and residuals are added in the list of assays.
 }
 \description{
 Given an object with the data, it performs dimensionality reduction using

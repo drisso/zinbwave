@@ -116,6 +116,7 @@ imputeZeros <- function(model, x) {
 #' model.
 #'
 #' @import SummarizedExperiment
+#' @import SingleCellExperiment
 #'
 #' @examples
 #' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
@@ -137,33 +138,31 @@ setMethod("zinbwave", "SummarizedExperiment",
                                           stop.epsilon.optimize, BPPARAM, ...)
               }
 
-              # Returns a summarizedExperiment object where normalized values
-              # and deviance residuals can be added to the list of assays and
-              # the W has been added to the colData matrix if K > 0
+              out <- as(Y, "SingleCellExperiment")
+
               if (normalizedValues){
                   norm <- computeDevianceResiduals(fitted_model, t(assay(Y)),
                                                    ignoreW = TRUE)
-                  assay(Y, "normalizedValues") <- t(norm)
+                  assay(out, "normalizedValues") <- t(norm)
               }
 
               if (residuals){
                   devres <- computeDevianceResiduals(fitted_model, t(assay(Y)),
                                                      ignoreW = FALSE)
-                  assay(Y, "residuals") <- t(devres)
+                  assay(out, "residuals") <- t(devres)
               }
 
               if (imputedValues){
                   imputed <- imputeZeros(fitted_model, t(assay(Y)))
-                  assay(Y, "imputedValues") <- t(imputed)
+                  assay(out, "imputedValues") <- t(imputed)
               }
 
-              # This will be changed when/if we switch to SingleCellExperiment
               if (nFactors(fitted_model) > 0){
-                  W <- data.frame(getW(fitted_model))
+                  W <- getW(fitted_model)
                   colnames(W) <- paste0('W', seq_len(nFactors(fitted_model)))
-                  colData(Y) <- cbind(colData(Y), W)
+                  reducedDim(out, "zinbwave") <- W
               }
 
-              return(Y)
+              return(out)
           }
 )
