@@ -710,7 +710,7 @@ setMethod(
 )
 
 #' @export
-#' @describeIn zinbAIC returns the AIC of the ZINB model.
+#' @describeIn zinb.AIC returns the AIC of the ZINB model.
 setMethod(
     f="zinb.AIC",
     signature=c("ZinbModel","matrix"),
@@ -725,7 +725,7 @@ setMethod(
 )
 
 #' @export
-#' @describeIn zinbBIC returns the BIC of the ZINB model.
+#' @describeIn zinb.BIC returns the BIC of the ZINB model.
 setMethod(
     f="zinb.BIC",
     signature=c("ZinbModel","matrix"),
