@@ -470,6 +470,20 @@ setGeneric(
     }
 )
 
+#' Generic function that returns the total number of parameters of the model
+#'
+#' Given an object that describes a model or a dataset, it returns total number of
+#' parameters of the model.
+#' @param model an object that describes a dataset or a model.
+#' @return the total number of parameters of the model.
+#' @export
+setGeneric(
+    name = "nParams",
+    def = function(model) {
+        standardGeneric("nParams")
+    }
+)
+
 #' Perform dimensionality reduction using a ZINB regression model with
 #' gene and cell-level covariates.
 #'
@@ -484,3 +498,35 @@ setGeneric(
 #'   normalized values and residuals are added in the list of assays.
 #' @export
 setGeneric("zinbwave", function(Y, ...) standardGeneric("zinbwave"))
+
+#' Compute the AIC of a model given some data
+#'
+#' Given a statistical model and some data, this function computes the AIC
+#' of the model given the data, i.e., the AIC of the data under the model.
+#' @param model an object that describes a statistical model.
+#' @param x an object that describes data.
+#' @return the AIC of the model.
+#' @export
+setGeneric(
+    name = "zinb.AIC",
+    def = function(model, x) {
+        standardGeneric("zinb.AIC")
+    }
+)
+
+#' Compute the BIC of a model given some data
+#'
+#' Given a statistical model and some data, this function computes the BIC
+#' of the model given the data, i.e., the BIC of the data under the model.
+#' @param model an object that describes a statistical model.
+#' @param x an object that describes data.
+#' @return the BIC of the model.
+#' @export
+setGeneric(
+    name = "zinb.BIC",
+    def = function(model, x) {
+        standardGeneric("zinb.BIC")
+    }
+)
+
+
