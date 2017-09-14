@@ -508,9 +508,9 @@ setGeneric("zinbwave", function(Y, ...) standardGeneric("zinbwave"))
 #' @return the AIC of the model.
 #' @export
 setGeneric(
-    name = "zinb.AIC",
+    name = "zinbAIC",
     def = function(model, x) {
-        standardGeneric("zinb.AIC")
+        standardGeneric("zinbAIC")
     }
 )
 
@@ -523,9 +523,9 @@ setGeneric(
 #' @return the BIC of the model.
 #' @export
 setGeneric(
-    name = "zinb.BIC",
+    name = "zinbBIC",
     def = function(model, x) {
-        standardGeneric("zinb.BIC")
+        standardGeneric("zinbBIC")
     }
 )
 
