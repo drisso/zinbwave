@@ -21,6 +21,31 @@ zinb.loglik.matrix <- function(model, x) {
     log(lik)
 }
 
+#' Observational weights of the zero-inflated negative binomial model for each entry
+#' in the matrix of counts
+#'
+#' Given a matrix of counts, this function computes the
+#' observational weights of the counts under a zero-inflated negative binomial
+#' (ZINB) model. For each count, the ZINB distribution is parametrized by three
+#' parameters: the mean value and the dispersion of the negative binomial
+#' distribution, and the probability of the zero component.
+#'
+#' @param model the zinb model
+#' @param x the matrix of counts
+#' @return the matrix of observational weights computed from the model.
+#' @importFrom stats dnbinom
+computeObservationalWeights <- function(model, x){
+    mu <- getMu(model)
+    pi <- getPi(model)
+    theta <- getTheta(model)
+    theta <- matrix(rep(theta, each = ncol(x)), ncol = nrow(x))
+    nb_part <- dnbinom(t(x), size = theta, mu = mu)
+    zinb_part <- pi * ( t(x) == 0 ) + (1 - pi) *  nb_part
+    zinbwg <- ( (1 - pi) * nb_part ) / zinb_part
+    t(zinbwg)
+}
+
+
 
 #' Deviance residuals of the zero-inflated negative binomial model
 #'
