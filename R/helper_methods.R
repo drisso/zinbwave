@@ -617,6 +617,29 @@ setMethod("getAlpha_pi", "ZinbModel",
           }
 )
 
+#' @export
+#' @describeIn nParams returns the total number of parameters in the model.
+setMethod("nParams", "ZinbModel",
+          function(model) {
+              X_pi <- getX_pi(model)
+              X_mu <- getX_mu(model)
+              V_pi <- getV_pi(model)
+              V_mu <- getV_mu(model)
+              disp <- get
+
+              n <- nSamples(model)
+              J <- nFeatures(model)
+              K <- nFactors(model)
+              M_pi <- NCOL(X_pi)
+              M_mu <- NCOL(X_mu)
+              L_pi <- NCOL(V_pi)
+              L_mu <- NCOL(V_mu)
+              ndisp <- length(unique(getZeta(model)))
+
+              J * (M_mu + M_pi) + n * (L_mu + L_pi) + 2 * K * J + n * K + ndisp
+          }
+)
+
 ########################
 # Other useful methods #
 ########################
@@ -683,6 +706,37 @@ setMethod(
         zinb.loglik(x, getMu(model),
                     rep(getTheta(model), rep(nSamples(model),nFeatures(model))),
                     getLogitPi(model))
+    }
+)
+
+#' @export
+#' @describeIn zinbAIC returns the AIC of the ZINB model.
+setMethod(
+    f="zinbAIC",
+    signature=c("ZinbModel","matrix"),
+    definition=function(model, x) {
+        if ((nSamples(model) != nrow(x))|(nFeatures(model) != ncol(x))) {
+            stop("x and model should have the same dimensions!")
+        }
+        k <- nParams(model)
+        ll <- loglik(model, x)
+        return(2*k - 2*ll)
+    }
+)
+
+#' @export
+#' @describeIn zinbBIC returns the BIC of the ZINB model.
+setMethod(
+    f="zinbBIC",
+    signature=c("ZinbModel","matrix"),
+    definition=function(model, x) {
+        n <- nSamples(model)
+        if ((n != nrow(x))|(nFeatures(model) != ncol(x))) {
+            stop("x and model should have the same dimensions!")
+        }
+        k <- nParams(model)
+        ll <- loglik(model, x)
+        return(log(n)*k - 2*ll)
     }
 )
 
