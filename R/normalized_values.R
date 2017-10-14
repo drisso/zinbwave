@@ -42,7 +42,9 @@ computeObservationalWeights <- function(model, x){
     nb_part <- dnbinom(t(x), size = theta, mu = mu)
     zinb_part <- pi * ( t(x) == 0 ) + (1 - pi) *  nb_part
     zinbwg <- ( (1 - pi) * nb_part ) / zinb_part
-    t(zinbwg)
+    zinbwg <- t(zinbwg)
+    zinbwg[x > 0] <- 1
+    zinbwg
 }
 
 
