@@ -34,6 +34,7 @@ zinb.loglik.matrix <- function(model, x) {
 #' @param x the matrix of counts
 #' @return the matrix of observational weights computed from the model.
 #' @importFrom stats dnbinom
+#' @export
 computeObservationalWeights <- function(model, x){
     mu <- getMu(model)
     pi <- getPi(model)
