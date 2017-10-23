@@ -29,7 +29,9 @@ Imports:
    glmnet,
    BiocParallel,
    softImpute,
-   stats
+   stats,
+   genefilter,
+   edgeR
 Suggests: 
     knitr,
     rmarkdown,
