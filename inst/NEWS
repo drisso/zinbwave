@@ -1,3 +1,9 @@
+Changes in Version 0.99.10 (2017-10-23)
+=====================================
+
+* Added AIC and BIC to decide number of factors
+* Added function to compute observational weights for DE
+
 Changes in Version 0.99.7 (2017-07-17)
 =====================================
 
