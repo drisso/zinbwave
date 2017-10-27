@@ -6,7 +6,7 @@
 differential expression.}
 \usage{
 glmWeightedF(glmfit, coef = ncol(glmfit$design), contrast = NULL,
-  test = "F", ZI = TRUE, independentFiltering = TRUE, filter = NULL)
+  ZI = TRUE, independentFiltering = TRUE, filter = NULL)
 }
 \arguments{
 \item{glmfit}{a \code{\link[edgeR]{DGEGLM-class}} object,

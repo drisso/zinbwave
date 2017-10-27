@@ -33,7 +33,7 @@
 #' @importFrom edgeR aveLogCPM glmFit
 #' @importFrom stats pf quantile
 glmWeightedF <- function(glmfit, coef = ncol(glmfit$design),
-                         contrast = NULL, test = "F", ZI = TRUE,
+                         contrast = NULL, ZI = TRUE,
                          independentFiltering = TRUE, filter = NULL){
 # Original function obtained from https://github.com/Bioconductor-mirror/edgeR/blob/release-3.0/R/glmfit.R
 # Tagwise likelihood ratio tests for DGEGLM
@@ -47,10 +47,6 @@ glmWeightedF <- function(glmfit, coef = ncol(glmfit$design),
     }
     if (is.null(glmfit$AveLogCPM)) glmfit$AveLogCPM <- aveLogCPM(glmfit)
     nlibs <- ncol(glmfit)
-
-    #	Check test
-    test <- match.arg(test, c("F", "f", "chisq"))
-    if(test == "f") test <- "F"
 
     #	Check design matrix
     design <- as.matrix(glmfit$design)
@@ -110,19 +106,6 @@ glmWeightedF <- function(glmfit, coef = ncol(glmfit$design),
     ## END ADDED
     df.test <- fit.null$df.residual - glmfit$df.residual ## okay
 
-    #	Chisquare or F-test
-    # LRT.pvalue <- switch(test,
-    #                      "F" = {
-    #                        phi <- quantile(glmfit$dispersion,p=0.5)
-    #                        mu <- quantile(glmfit$fitted.values,p=0.5)
-    #                        gamma.prop <- (phi*mu/(1 + phi*mu))^2
-    #                        prior.df <- glmfit$prior.df
-    #                        if(is.null(prior.df)) prior.df <- 20
-    #                        glmfit$df.total <- glmfit$df.residual + prior.df/gamma.prop
-    #                        pf(LR/df.test, df1=df.test, df2=glmfit$df.total, lower.tail = FALSE, log.p = FALSE)
-    #                      },
-    #                      "chisq" = pchisq(LR, df=df.test, lower.tail = FALSE, log.p = FALSE)
-    # )
     LRT.pvalue <- {
         phi <- quantile(glmfit$dispersion, p = 0.5)
         mu <- quantile(glmfit$fitted.values, p = 0.5)
