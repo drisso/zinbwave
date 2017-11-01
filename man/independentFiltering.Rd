@@ -25,11 +25,6 @@ This function uses the \code{DESeq2} independent filtering method
 to increase detection power in high throughput gene expression
 studies.
 }
-\note{
-This function uses an adapted version of the
-\code{pvalueAdjustment} function that was originally written by
-Michael I. Love as part of the DESeq2 package.
-}
 \references{
 Michael I Love, Wolfgang Huber, and Simon Anders.
 Moderated estimation of fold change and dispersion for RNA-seq data
@@ -37,4 +32,7 @@ with DESeq2. Genome Biology, 15(12):550, dec 2014.
 }
 \seealso{
 \code{\link[DESeq2]{results}}
+}
+\author{
+Koen Van den Berge
 }
