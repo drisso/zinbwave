@@ -38,3 +38,9 @@ number of rejections, and alpha.
 This function performs independent filtering to increase detection
 power in high throughput gene expression studies.
 }
+\note{
+This function is an adapted version of the
+\code{pvalueAdjustment} function that was originally written by
+Michael I. Love as part of the DESeq2 package.
+Koen Van den Berge adapted the function.
+}

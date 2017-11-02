@@ -28,6 +28,8 @@
 #' @note This function uses an adapted version of the \code{glmLRT}
 #' function that was originally written by Gordon Smyth, Davis
 #' McCarthy and Yunshun Chen as part of the edgeR package.
+#' Koen Van den Berge wrote code to adjust residual degree 
+#' of freedoom and added the independent filtering step.
 #' @seealso \code{\link[edgeR]{glmLRT}}
 #' @export
 #' @importFrom edgeR aveLogCPM glmFit
@@ -162,9 +164,7 @@ glmWeightedF <- function(glmfit, coef = ncol(glmfit$design),
 #' Michael I Love, Wolfgang Huber, and Simon Anders.
 #' Moderated estimation of fold change and dispersion for RNA-seq data
 #' with DESeq2. Genome Biology, 15(12):550, dec 2014.
-#' @note This function uses an adapted version of the
-#' \code{pvalueAdjustment} function that was originally written by
-#' Michael I. Love as part of the DESeq2 package.
+#' @author Koen Van den Berge
 independentFiltering <- function(object, filter,
                                  objectType = c("edgeR","limma")){
     if(objectType == "edgeR"){
@@ -208,12 +208,12 @@ independentFiltering <- function(object, filter,
 #' number of rejections, and alpha.
 #' @importFrom genefilter filtered_p
 #' @importFrom stats lowess quantile
+#' @note This function is an adapted version of the
+#' \code{pvalueAdjustment} function that was originally written by
+#' Michael I. Love as part of the DESeq2 package.
+#' Koen Van den Berge adapted the function.
 pvalueAdjustment <- function(baseMean, filter, pValue, theta,
                              alpha = 0.05, pAdjustMethod = "BH") {
-    # this function has been adapted from the pValueAdjustment
-    # function from the DESeq2 Bioconductor package and was originally
-    # written by Mike Love.
-
     if (missing(filter)) {
         filter <- baseMean
     }
