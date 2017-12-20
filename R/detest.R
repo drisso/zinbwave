@@ -28,7 +28,7 @@
 #' @note This function uses an adapted version of the \code{glmLRT}
 #' function that was originally written by Gordon Smyth, Davis
 #' McCarthy and Yunshun Chen as part of the edgeR package.
-#' Koen Van den Berge wrote code to adjust residual degree 
+#' Koen Van den Berge wrote code to adjust residual degree
 #' of freedoom and added the independent filtering step.
 #' @seealso \code{\link[edgeR]{glmLRT}}
 #' @export
@@ -37,10 +37,10 @@
 glmWeightedF <- function(glmfit, coef = ncol(glmfit$design),
                          contrast = NULL, ZI = TRUE,
                          independentFiltering = TRUE, filter = NULL){
-# Original function obtained from https://github.com/Bioconductor-mirror/edgeR/blob/release-3.0/R/glmfit.R
-# Tagwise likelihood ratio tests for DGEGLM
-# Gordon Smyth, Davis McCarthy and Yunshun Chen.
-# Created 1 July 2010.  Last modified 22 Nov 2013.
+    # Original function obtained from https://github.com/Bioconductor-mirror/edgeR/blob/release-3.0/R/glmfit.R
+    # Tagwise likelihood ratio tests for DGEGLM
+    # Gordon Smyth, Davis McCarthy and Yunshun Chen.
+    # Created 1 July 2010.  Last modified 22 Nov 2013.
     if (!is(glmfit, "DGEGLM")) {
         if (is(glmfit, "DGEList") && is(coef, "DGEGLM")) {
             stop("First argument is no longer required. Rerun with just the glmfit and coef/contrast arguments.")
@@ -102,10 +102,10 @@ glmWeightedF <- function(glmfit, coef = ncol(glmfit$design),
 
     #	Likelihood ratio statistic
     LR <- fit.null$deviance - glmfit$deviance
-    ### ADDED
+
     if(ZI) fit.null$df.residual <- rowSums(fit.null$weights) - ncol(design0)
     if(ZI) glmfit$df.residual <- rowSums(glmfit$weights) - ncol(design)
-    ## END ADDED
+
     df.test <- fit.null$df.residual - glmfit$df.residual ## okay
 
     LRT.pvalue <- {
@@ -118,6 +118,8 @@ glmWeightedF <- function(glmfit, coef = ncol(glmfit$design),
         pf(LR/df.test, df1 = df.test, df2 = glmfit$df.total,
            lower.tail = FALSE, log.p = FALSE)
     }
+    ### set p-values to NA if residual df non-positive
+    LRT.pvalue[glmfit$df.residual<=0] = NA
 
     rn <- rownames(glmfit)
     if(is.null(rn))
@@ -142,6 +144,7 @@ glmWeightedF <- function(glmfit, coef = ncol(glmfit$design),
                                     objectType = "edgeR")
     } else return(res)
 }
+
 
 #' Perform independent filtering in differential expression analysis.
 #'
