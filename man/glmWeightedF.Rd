@@ -40,7 +40,7 @@ downweighting in the zero-inflation model.
 This function uses an adapted version of the \code{glmLRT}
 function that was originally written by Gordon Smyth, Davis
 McCarthy and Yunshun Chen as part of the edgeR package.
-Koen Van den Berge wrote code to adjust residual degree 
+Koen Van den Berge wrote code to adjust residual degree
 of freedoom and added the independent filtering step.
 }
 \references{
