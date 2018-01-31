@@ -16,7 +16,8 @@ zinbwave(Y, ...)
   residuals = FALSE, imputedValues = FALSE, ...)
 }
 \arguments{
-\item{Y}{The data (genes in rows, samples in columns).}
+\item{Y}{The data (genes in rows, samples in columns). Currently implemented
+only for \code{SummarizedExperiment}.}
 
 \item{...}{Additional parameters to describe the model, see
 \code{\link{zinbModel}}.}

@@ -490,7 +490,8 @@ setGeneric(
 #' Given an object with the data, it performs dimensionality reduction using
 #' a ZINB regression model with gene and cell-level covariates.
 #'
-#' @param Y The data (genes in rows, samples in columns).
+#' @param Y The data (genes in rows, samples in columns). Currently implemented
+#'   only for \code{SummarizedExperiment}.
 #' @param ... Additional parameters to describe the model, see
 #'   \code{\link{zinbModel}}.
 #' @return An object of class \code{SingleCellExperiment}; the dimensionality
