@@ -30,6 +30,7 @@ Note that `zinbwave` requires R (>=3.4) and Bioconductor (>=3.6).
 
 ```{r options, include=FALSE, echo=FALSE}
 knitr::opts_chunk$set(warning=FALSE, error=FALSE, message=FALSE)
+set.seed(1133)
 ```
 
 This vignette provides an introductory example on how to work with the `zinbwave`
@@ -118,24 +119,24 @@ fluidigm <- fluidigm[names(vars)[1:100],]
 
 # ZINB-WaVE
 
-We can now apply the `zinbFit` function to our reduced gene expression matrix,
-to fit the ZINB model.
+The easiest way to obtain the low-dimensional representation of the data with ZINB-WaVE is to use the `zinbwave` function. This function takes as input a `SummarizedExperiment` object and returns a `SingleCellExperiment` object.
 
-```{r zinb}
-zinb <- zinbFit(fluidigm, K=2, epsilon=1000)
+```{r zinbwave}
+fluidigm_zinb <- zinbwave(fluidigm, K = 2, epsilon=1000)
 ```
 
-By default, the `zinbFit` function fits a ZINB model with $X = {\bf 1}_n$ and $V = {\bf 1}_J$. In this case, the model is a factor model akin to principal component analysis (PCA), where $W$ is a factor matrix and $\alpha_\mu$ and $\alpha_\pi$ are loading matrices. 
+By default, the `zinbwave` function fits a ZINB model with $X = {\bf 1}_n$ and $V = {\bf 1}_J$. In this case, the model is a factor model akin to principal component analysis (PCA), where $W$ is a factor matrix and $\alpha_\mu$ and $\alpha_\pi$ are loading matrices. 
 By default, the `epsilon` parameter is set to the number of genes. We empirically 
 found that a high `epsilon` is often required to obtained a good low-level 
 representation. See `?zinbModel` for details. Here we set `epsilon=1000`.
 
 The parameter $K$ controls how many latent variables we want to infer
-from the data. In this case, as we specified $K=2$, we can visualize the resulting $W$ matrix in a simple plot, color-coded by cell-type.
+from the data. $W$ is stored in the `reducedDim` slot of the object. (See the `SingleCellExperiment` vignette for details).
+
+In this case, as we specified $K=2$, we can visualize the resulting $W$ matrix in a simple plot, color-coded by cell-type.
 
 ```{r zinb_plot}
-W <- getW(zinb)
-colnames(W) <- paste0("W", 1:2)
+W <- reducedDim(fluidigm_zinb)
 
 data.frame(W, bio=colData(fluidigm)$Biological_Condition,
            coverage=colData(fluidigm)$Coverage_Type) %>%
@@ -156,12 +157,11 @@ The column `Coverage_Type` in the `colData` of `fluidigm` contains the coverage 
 variable for the coverage, by using the formula interface of `zinbFit`.
 
 ```{r zinb_coverage}
-zinb_cov <- zinbFit(fluidigm, K=2, X="~Coverage_Type", epsilon=1000)
+fluidigm_cov <- zinbwave(fluidigm, K=2, X="~Coverage_Type", epsilon=1000)
 ```
 
 ```{r zinb_plot2}
-W <- getW(zinb_cov)
-colnames(W) <- paste0("W", 1:2)
+W <- reducedDim(fluidigm_cov)
 
 data.frame(W, bio=colData(fluidigm)$Biological_Condition,
            coverage=colData(fluidigm)$Coverage_Type) %>%
@@ -179,7 +179,7 @@ illustrate this capability by including gene length and GC-content.
 
 We use the `biomaRt` package to compute gene length and GC-content.
 
-```{r gcc}
+```{r gcc, eval=FALSE}
 mart <- useMart("ensembl")
 mart <- useDataset("hsapiens_gene_ensembl", mart = mart)
 bm <- getBM(attributes=c('hgnc_symbol', 'start_position',
@@ -197,22 +197,12 @@ gcc <- gcc[rownames(fluidigm)]
 
 We then include the gene-level information as `rowData` in the `fluidigm` object.
 
-```{r rowdata}
+```{r rowdata, eval=FALSE}
 rowData(fluidigm) <- data.frame(gccontent = gcc, length = len)
 ```
 
-```{r zinb_gcc}
-zinb_gcc <- zinbFit(fluidigm, K=2, V="~gccontent + log(length)", epsilon=1000)
-```
-
-```{r zinb_plot3}
-W <- getW(zinb_gcc)
-colnames(W) <- paste0("W", 1:2)
-
-data.frame(W, bio=colData(fluidigm)$Biological_Condition,
-           coverage=colData(fluidigm)$Coverage_Type) %>%
-    ggplot(aes(W1, W2, colour=bio, shape=coverage)) + geom_point() + 
-    scale_color_brewer(type = "qual", palette = "Set1") + theme_classic()
+```{r zinb_gcc, eval=FALSE}
+fluidigm_gcc <- zinbwave(fluidigm, K=2, V="~gccontent + log(length)", epsilon=1000)
 ```
 
 # t-SNE representation
@@ -224,9 +214,8 @@ in the reduced space and running the t-SNE algorithm on the distance.
 set.seed(93024)
 
 library(Rtsne)
-d <- dist(getW(zinb_gcc))
-tsne_data <- Rtsne(d, is_distance = TRUE, pca = FALSE, 
-                   perplexity=10, max_iter=5000)
+W <- reducedDim(fluidigm_cov)
+tsne_data <- Rtsne(W, pca = FALSE, perplexity=10, max_iter=5000)
 
 data.frame(Dim1=tsne_data$Y[,1], Dim2=tsne_data$Y[,2], 
            bio=colData(fluidigm)$Biological_Condition,
@@ -239,32 +228,35 @@ data.frame(Dim1=tsne_data$Y[,1], Dim2=tsne_data$Y[,2],
 
 Sometimes it is useful to have normalized values for visualization and residuals
 for model evaluation. Both quantities can be computed with the `zinbwave()` 
-function, which will return a `SingleCellExperiment` object with the W matrix,
-and optionally the residuals and normalized values.
+function.
 
-```{r zinbwave, eval=FALSE}
-se_norm <- zinbwave(fluidigm, K=2, epsilon=1000, normalizedValues=TRUE,
+```{r norm}
+fluidigm_norm <- zinbwave(fluidigm, K=2, epsilon=1000, normalizedValues=TRUE,
                     residuals = TRUE)
 ```
 
-If one has already fitted a model with `zinbFit` the resulting `ZinbModel`
-object can be passed to `zinbwave` to avoid repeating the same computations.
-
-```{r zinbwave2}
-se_norm <- zinbwave(fluidigm, fitted_model=zinb, normalizedValues=TRUE,
-                    residuals = TRUE)
-```
-
-The `se_norm` object includes normalized values and residuals as additional `assays`.
+The `fluidigm_norm` object includes normalized values and residuals as additional `assays`.
 
 ```{r assays}
-se_norm
+fluidigm_norm
 ```
 
-To retrieve the W matrix, we can use the `SingleCellExperiment` `reducedDim` method.
+# The `zinbFit` function
 
-```{r dimReduce}
-head(reducedDim(se_norm))
+The `zinbwave` function is a user-friendly function to obtain the low-dimensional representation of the data, and optionally the normalized values and residuals from the model.
+
+However, it is sometimes useful to store all the parameter estimates and the value of the likelihood. The `zinbFit` function allows the user to create an object of class `zinbModel` that can be used to store all the parameter estimates and have greater control on the results.
+
+```{r zinb}
+zinb <- zinbFit(fluidigm, K=2, epsilon=1000)
+```
+
+As with `zinbwave`, by default, the `zinbFit` function fits a ZINB model with $X = {\bf 1}_n$ and $V = {\bf 1}_J$.
+
+If a user has run `zinbFit` and wants to obtain normalized values or the low-dimensional representation of the data in a `SingleCellExperiment` format, they can pass the `zinbModel` object to `zinbwave` to avoid repeating all the computations.
+
+```{r zinbwave2}
+fluidigm_zinb <- zinbwave(fluidigm, fitted_model = zinb, K = 2, epsilon=1000)
 ```
 
 # A note on performance and parallel computing
@@ -282,7 +274,7 @@ Alternatively, one can pass a `BPPARAM` object to `zinbwave` and `zinbFit`, e.g.
 
 ```{r, eval=FALSE}
 library(BiocParallel)
-zinb_res <- zinbFit(fluidigm, K=2, BPPARAM=MulticoreParam(2))
+zinb_res <- zinbwave(fluidigm, K=2, BPPARAM=MulticoreParam(2))
 ```
 
 We found that `MulticoreParam()` may have some performance issues on Mac; hence,
