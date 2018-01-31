@@ -259,6 +259,20 @@ If a user has run `zinbFit` and wants to obtain normalized values or the low-dim
 fluidigm_zinb <- zinbwave(fluidigm, fitted_model = zinb, K = 2, epsilon=1000)
 ```
 
+# Differential Expression
+
+The `zinbwave` package can be used to compute observational weights to "unlock" bulk RNA-seq tools for single-cell applications, as illustrated in [@van2018observation].
+
+The function `computeObservationalWeights` can be used to compute the weights. It starts from the `zinbModel` object.
+
+```{r weights}
+weights <- computeObservationalWeights(zinb, assay(fluidigm))
+```
+
+## Differential expression with edgeR
+
+## Differential expression with DESeq2
+
 # A note on performance and parallel computing
 
 The `zinbwave` package uses the `BiocParallel` package to allow for parallel
