@@ -43,8 +43,7 @@ Suggests:
     biomaRt,
     BiocStyle,
     Rtsne,
-    DESeq2,
-    edgeR
+    DESeq2
 VignetteBuilder: knitr
 LazyData: TRUE
 RoxygenNote: 6.0.1
