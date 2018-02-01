@@ -271,7 +271,48 @@ weights <- computeObservationalWeights(zinb, assay(fluidigm))
 
 ## Differential expression with edgeR
 
+Once we have the observational weights, we can use them in `edgeR` to perform differential expression. Specifically, we use a moderated F-test in which the denominator residual degrees of freedom are adjusted by the extent of zero inflation (see [@van2018observation] for details).
+
+Here, we compare NPC to GW16. Note that we start from only 100 genes for computational reasons, but in real analyses we would use all the expressed genes.
+
+```{r edger}
+library(edgeR)
+
+dge <- DGEList(assay(fluidigm))
+dge <- calcNormFactors(dge)
+
+design <- model.matrix(~Biological_Condition, data = colData(fluidigm))
+dge$weights <- weights
+dge <- estimateDisp(dge, design)
+fit <- glmFit(dge, design)
+
+lrt <- glmWeightedF(fit, coef = 3)
+topTags(lrt)
+```
+
 ## Differential expression with DESeq2
+
+Analogously, we can use the weights in a `DESeq2` analysis by using observation-level weights in the parameter estimation steps.
+
+```{r deseq2}
+library(DESeq2)
+
+dse <- DESeqDataSet(fluidigm, design = ~ Biological_Condition)
+assays(dse)[["weights"]] <- weights
+
+dse <- estimateSizeFactors(dse, type="poscounts")
+dse <- estimateDispersions(dse, minmu=1e-3)
+
+dse <- nbinomWaldTest(dse, modelMatrixType="standard", betaPrior=TRUE, 
+                      useT=TRUE, df=rowSums(weights)-13, minmu=1e-3)
+res <- results(dse, contrast=c("Biological_Condition", "NPC", "GW16"))
+head(res)
+```
+
+Note that `DESeq2`'s default normalization procedure is based on geometric means of counts, which are zero for genes with at least one zero count. This greatly limits the number of genes that can be used for normalization in scRNA-seq applications. We therefore use the normalization method suggested in the `phyloseq` package, which calculates the geometric mean for a gene by only using its positive counts, so that genes with zero counts could still be used for normalization purposes. 
+The `phyloseq` normalization procedure can be applied by setting the argument `type` equal to `poscounts` in `estimateSizeFactors`. 
+
+For UMI data, for which the expected counts may be very low, the likelihood ratio test implemented in `nbinomLRT` should be used. For other protocols (i.e., non-UMI), the Wald test in `nbinomWaldTest` can be used, with null distribution a t-distribution with degrees of freedom corrected by the observational weights. In both cases, we recommend the minimum expected count to be set to a small value (e.g., `minmu=1e-6`).
 
 # A note on performance and parallel computing
 
