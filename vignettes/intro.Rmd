@@ -269,6 +269,8 @@ The function `computeObservationalWeights` can be used to compute the weights. I
 weights <- computeObservationalWeights(zinb, assay(fluidigm))
 ```
 
+Note that in this example, the value of the penalty parameter `epsilon` was set at `1000`, although we do not recommend this for differential expression analysis in real applications. Our evaluations have shown that a value of `epsilon=1e12` gives good performance across a range of datasets, although this number is still arbitrary. In general, values between `1e6` and `1e13` give best performances.
+
 ## Differential expression with edgeR
 
 Once we have the observational weights, we can use them in `edgeR` to perform differential expression. Specifically, we use a moderated F-test in which the denominator residual degrees of freedom are adjusted by the extent of zero inflation (see [@van2018observation] for details).
@@ -301,10 +303,10 @@ dse <- DESeqDataSet(fluidigm, design = ~ Biological_Condition)
 assays(dse)[["weights"]] <- weights
 
 dse <- estimateSizeFactors(dse, type="poscounts")
-dse <- estimateDispersions(dse, minmu=1e-3)
+dse <- estimateDispersions(dse, minmu=1e-6)
 
 dse <- nbinomWaldTest(dse, modelMatrixType="standard", betaPrior=TRUE, 
-                      useT=TRUE, df=rowSums(weights)-13, minmu=1e-3)
+                      useT=TRUE, df=rowSums(weights)-NCOL(design), minmu=1e-6)
 res <- results(dse, contrast=c("Biological_Condition", "NPC", "GW16"))
 head(res)
 ```
