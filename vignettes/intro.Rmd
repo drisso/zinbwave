@@ -305,9 +305,10 @@ assays(dse)[["weights"]] <- weights
 dse <- estimateSizeFactors(dse, type="poscounts")
 dse <- estimateDispersions(dse, minmu=1e-6)
 
-dse <- nbinomWaldTest(dse, modelMatrixType="standard", betaPrior=TRUE, 
-                      useT=TRUE, df=rowSums(weights)-NCOL(design), minmu=1e-6)
-res <- results(dse, contrast=c("Biological_Condition", "NPC", "GW16"))
+dse <- nbinomWaldTest(dse, useT=TRUE, df=rowSums(weights)-NCOL(design),
+                      minmu=1e-6)
+res <- lfcShrink(dds = dse, contrast=c("Biological_Condition", "NPC", "GW16"),
+                 type = "normal")
 head(res)
 ```
 
