@@ -138,6 +138,7 @@ setMethod("zinbFit", "matrix",
 #' @param BPPARAM object of class \code{bpparamClass} that specifies the
 #'   back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
+#' @param it.max Maximum number of iterations in softImpute.
 #' @return An object of class ZinbModel similar to the one given as argument
 #'   with modified parameters alpha_mu, alpha_pi, beta_mu, beta_pi, gamma_mu,
 #'   gamma_pi, W.
@@ -152,7 +153,7 @@ setMethod("zinbFit", "matrix",
 #' @export
 #' @importFrom glmnet glmnet
 #' @importFrom softImpute softImpute
-zinbInitialize <- function(m, Y, nb.repeat=2, BPPARAM=BiocParallel::bpparam()) {
+zinbInitialize <- function(m, Y, nb.repeat=2, BPPARAM=BiocParallel::bpparam(), it.max = 100) {
 
     n <- NROW(Y)
     J <- NCOL(Y)
@@ -230,7 +231,7 @@ zinbInitialize <- function(m, Y, nb.repeat=2, BPPARAM=BiocParallel::bpparam()) {
         # Find a low-rank approximation with trace-norm regularization
         R <- softImpute::softImpute(D,
                 lambda=sqrt(getEpsilon_W(m) * getEpsilon_alpha(m))[1],
-                rank.max=nFactors(m))
+                rank.max=nFactors(m), maxit = it.max)
 
         # Orthogonalize to get W and alpha
         W <- (getEpsilon_alpha(m) / getEpsilon_W(m))[1]^(1/4) *
