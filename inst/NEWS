@@ -1,3 +1,10 @@
+Changes in Version 1.1.5 (2018-02-15)
+=====================================
+
+* Computational weights are computed in `zinbwave` as saved as assay.
+* Modified vignette to include example of Differential Expression.
+* Improved documentation for `zinbwave`.
+
 Changes in Version 0.99.10 (2017-10-23)
 =====================================
 
