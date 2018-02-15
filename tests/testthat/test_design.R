@@ -106,7 +106,11 @@ test_that("zinbFit works with K>0", {
 
 test_that("zinbSim works", {
     a <- zinbModel(n=5, J=10)
-    zinbSim(a)
+    sim <- zinbSim(a)
+
+    expect_true(all(.is_wholenumber(sim$counts)))
+    expect_true(all(.is_wholenumber(sim$dataNB)))
+    expect_true(all(.is_wholenumber(sim$dataDropouts)))
 })
 
 test_that("getMu and getPi have the right dimensions", {
