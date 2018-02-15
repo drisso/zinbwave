@@ -263,10 +263,11 @@ fluidigm_zinb <- zinbwave(fluidigm, fitted_model = zinb, K = 2, epsilon=1000)
 
 The `zinbwave` package can be used to compute observational weights to "unlock" bulk RNA-seq tools for single-cell applications, as illustrated in [@van2018observation].
 
-The function `computeObservationalWeights` can be used to compute the weights. It starts from the `zinbModel` object.
+Since version `1.1.5`, `zinbwave` computes the observational weights by default. See the man page of `zinbwave`.
+The weights are stored in an `assay` named `weights` and can be accessed with the following call.
 
 ```{r weights}
-weights <- computeObservationalWeights(zinb, assay(fluidigm))
+weights <- assay(fluidigm_zinb, "weights")
 ```
 
 Note that in this example, the value of the penalty parameter `epsilon` was set at `1000`, although we do not recommend this for differential expression analysis in real applications. Our evaluations have shown that a value of `epsilon=1e12` gives good performance across a range of datasets, although this number is still arbitrary. In general, values between `1e6` and `1e13` give best performances.
@@ -280,7 +281,7 @@ Here, we compare NPC to GW16. Note that we start from only 100 genes for computa
 ```{r edger}
 library(edgeR)
 
-dge <- DGEList(assay(fluidigm))
+dge <- DGEList(assay(fluidigm_zinb))
 dge <- calcNormFactors(dge)
 
 design <- model.matrix(~Biological_Condition, data = colData(fluidigm))
@@ -294,26 +295,21 @@ topTags(lrt)
 
 ## Differential expression with DESeq2
 
-Analogously, we can use the weights in a `DESeq2` analysis by using observation-level weights in the parameter estimation steps.
+Analogously, we can use the weights in a `DESeq2` analysis by using observation-level weights in the parameter estimation steps. In this case, there is no need to pass the weights to `DESeq2` since they are already in the `weights` assay of the object.
 
 ```{r deseq2}
 library(DESeq2)
 
-dse <- DESeqDataSet(fluidigm, design = ~ Biological_Condition)
-assays(dse)[["weights"]] <- weights
+dds <- DESeqDataSet(fluidigm_zinb, design = ~ Biological_Condition)
 
-dse <- estimateSizeFactors(dse, type="poscounts")
-dse <- estimateDispersions(dse, minmu=1e-6)
-
-dse <- nbinomWaldTest(dse, useT=TRUE, df=rowSums(weights)-NCOL(design),
-                      minmu=1e-6)
-res <- lfcShrink(dds = dse, contrast=c("Biological_Condition", "NPC", "GW16"),
+dds <- DESeq(dds, sfType="poscounts", useT=TRUE, minmu=1e-6)
+res <- lfcShrink(dds, contrast=c("Biological_Condition", "NPC", "GW16"),
                  type = "normal")
 head(res)
 ```
 
 Note that `DESeq2`'s default normalization procedure is based on geometric means of counts, which are zero for genes with at least one zero count. This greatly limits the number of genes that can be used for normalization in scRNA-seq applications. We therefore use the normalization method suggested in the `phyloseq` package, which calculates the geometric mean for a gene by only using its positive counts, so that genes with zero counts could still be used for normalization purposes. 
-The `phyloseq` normalization procedure can be applied by setting the argument `type` equal to `poscounts` in `estimateSizeFactors`. 
+The `phyloseq` normalization procedure can be applied by setting the argument `type` equal to `poscounts` in `DESeq`. 
 
 For UMI data, for which the expected counts may be very low, the likelihood ratio test implemented in `nbinomLRT` should be used. For other protocols (i.e., non-UMI), the Wald test in `nbinomWaldTest` can be used, with null distribution a t-distribution with degrees of freedom corrected by the observational weights. In both cases, we recommend the minimum expected count to be set to a small value (e.g., `minmu=1e-6`).
 

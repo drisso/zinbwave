@@ -13,7 +13,8 @@ zinbwave(Y, ...)
   commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
   maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
   BPPARAM = BiocParallel::bpparam(), normalizedValues = TRUE,
-  residuals = FALSE, imputedValues = FALSE, ...)
+  residuals = FALSE, imputedValues = FALSE, observationalWeights = TRUE,
+  ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns). Currently implemented
@@ -61,6 +62,9 @@ of the ZINB model. Deviance residuals are computed.}
 
 \item{imputedValues}{indicates wether or not you want to compute the imputed
 counts of the ZINB model.}
+
+\item{observationalWeights}{indicates whether to compute the observational
+weights for differential expression (see vignette).}
 }
 \value{
 An object of class \code{SingleCellExperiment}; the dimensionality

@@ -130,6 +130,8 @@ imputeZeros <- function(model, x) {
 #' of the ZINB model. Deviance residuals are computed.
 #' @param imputedValues indicates wether or not you want to compute the imputed
 #' counts of the ZINB model.
+#' @param observationalWeights indicates whether to compute the observational
+#'   weights for differential expression (see vignette).
 #'
 #' @details For visualization (heatmaps, ...), please use the normalized values.
 #' It corresponds to the deviance residuals when the \code{W} is not included
@@ -157,7 +159,8 @@ setMethod("zinbwave", "SummarizedExperiment",
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(),
                    normalizedValues = TRUE, residuals = FALSE,
-                   imputedValues = FALSE, ...) {
+                   imputedValues = FALSE,
+                   observationalWeights = TRUE, ...) {
 
               if(missing(fitted_model)) {
                   fitted_model <- zinbFit(Y, X, V, commondispersion,
@@ -189,6 +192,15 @@ setMethod("zinbwave", "SummarizedExperiment",
                   W <- getW(fitted_model)
                   colnames(W) <- paste0('W', seq_len(nFactors(fitted_model)))
                   reducedDim(out, "zinbwave") <- W
+              }
+
+              if (observationalWeights) {
+                  weights <- computeObservationalWeights(fitted_model,
+                                                         assay(Y))
+
+                  dimnames(weights) <- dimnames(out)
+
+                  assay(out, "weights") <- weights
               }
 
               return(out)
