@@ -14,7 +14,8 @@ test_that("W can be estimated from random matrix (no signal)", {
     mm = zinbModel(X = X,
                    V = V,
                    W = W,
-                   gamma_mu = matrix(1, ncol = nS))
+                   gamma_mu = matrix(1, ncol = nS),
+                   beta_mu = matrix(5, ncol=nG))
 
     my_data <- zinbSim(mm)
 
@@ -45,7 +46,9 @@ test_that("W can be estimated from two-dimensional signal (no signal)", {
     V <- matrix(rnorm(nG), ncol = 1)
     mm = zinbModel(X = X,
                    V = V,
-                   W = W)
+                   W = W,
+                   gamma_mu = matrix(1, ncol = nS),
+                   beta_mu = matrix(5, ncol=nG))
 
     my_data <- zinbSim(mm)
 
