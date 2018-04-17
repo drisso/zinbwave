@@ -5,16 +5,33 @@
 #' @import SummarizedExperiment
 #' @importFrom stats model.matrix as.formula
 #'
+#' @param which_assay numeric or character. Which assay of Y to use (only if Y
+#'   is a SummarizedExperiment).
 #' @examples
 #' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
 #'                            colData = data.frame(bio = gl(2, 3)))
 #'
 #' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)))
 setMethod("zinbFit", "SummarizedExperiment",
-          function(Y, X, V, commondispersion=TRUE, verbose=FALSE,
+          function(Y, X, V, which_assay,
+                   commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(), ...) {
+
+              if(missing(which_assay)) {
+                  if("counts" %in% assayNames(Y)) {
+                      dataY <- assay(Y, "counts")
+                  } else {
+                      dataY <- assay(Y)
+                  }
+              } else {
+                  if(!(is.character(which_assay) | is.numeric(which_assay))) {
+                      stop("assay needs to be a numeric or character specifying which assay to use")
+                  } else {
+                      dataY <- assay(Y, which_assay)
+                  }
+              }
 
               if(!missing(X)) {
                   if(!is.matrix(X)) {
@@ -41,7 +58,7 @@ setMethod("zinbFit", "SummarizedExperiment",
               }
 
               # Apply zinbFit on the assay of SummarizedExperiment
-              res <- zinbFit(assay(Y), X, V, commondispersion,
+              res <- zinbFit(dataY, X, V, commondispersion,
                              verbose, nb.repeat.initialize, maxiter.optimize,
                              stop.epsilon.optimize, BPPARAM, ...)
 
@@ -81,6 +98,9 @@ setMethod("zinbFit", "SummarizedExperiment",
 #'   X_pi = 1_n} and \code{V_mu = V_pi = 1_J}. If the user explicitly passes the
 #'   design matrices, this behavior is overwritten, i.e., the user needs to
 #'   explicitly include the intercept in the design matrices.
+#'
+#' @details If Y is a Summarized experiment, the function uses the assay named
+#'   "counts", if any, or the first assay.
 #'
 #' @seealso \code{\link[stats]{model.matrix}}.
 #'

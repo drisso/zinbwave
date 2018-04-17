@@ -111,6 +111,9 @@ imputeZeros <- function(model, x) {
 #'   SummarizedExperiment object, V can be a formula using the variables in the
 #'   rowData slot of Y.
 #' @param fitted_model a \code{\link{ZinbModel}} object.
+#' @param which_assay numeric or character. Which assay of Y to use. If missing,
+#'   if `assayNames(Y)` contains "counts" then that is used. Otherwise, the
+#'   first assay is used.
 #' @param commondispersion Whether or not a single dispersion for all features
 #'   is estimated (default TRUE).
 #' @param BPPARAM object of class \code{bpparamClass} that specifies the
@@ -154,7 +157,8 @@ imputeZeros <- function(model, x) {
 #'
 #' m <- zinbwave(se, X="~bio")
 setMethod("zinbwave", "SummarizedExperiment",
-          function(Y, X, V, fitted_model, commondispersion=TRUE, verbose=FALSE,
+          function(Y, X, V, fitted_model, which_assay,
+                   commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(),
@@ -163,7 +167,8 @@ setMethod("zinbwave", "SummarizedExperiment",
                    observationalWeights = TRUE, ...) {
 
               if(missing(fitted_model)) {
-                  fitted_model <- zinbFit(Y, X, V, commondispersion,
+                  fitted_model <- zinbFit(Y, X, V, which_assay,
+                                          commondispersion,
                                           verbose, nb.repeat.initialize,
                                           maxiter.optimize,
                                           stop.epsilon.optimize, BPPARAM, ...)
@@ -171,20 +176,36 @@ setMethod("zinbwave", "SummarizedExperiment",
 
               out <- as(Y, "SingleCellExperiment")
 
+              if(missing(which_assay)) {
+                  if("counts" %in% assayNames(Y)) {
+                      dataY <- assay(Y, "counts")
+                  } else {
+                      warning("No assay named `counts`, using first assay.",
+                              "Use `assay` to specify a different assay.")
+                      dataY <- assay(Y)
+                  }
+              } else {
+                  if(!(is.character(which_assay) | is.numeric(which_assay))) {
+                      stop("assay needs to be a numeric or character specifying which assay to use")
+                  } else {
+                      dataY <- assay(Y, which_assay)
+                  }
+              }
+
               if (normalizedValues){
-                  norm <- computeDevianceResiduals(fitted_model, t(assay(Y)),
+                  norm <- computeDevianceResiduals(fitted_model, t(dataY),
                                                    ignoreW = TRUE)
                   assay(out, "normalizedValues") <- t(norm)
               }
 
               if (residuals){
-                  devres <- computeDevianceResiduals(fitted_model, t(assay(Y)),
+                  devres <- computeDevianceResiduals(fitted_model, t(dataY),
                                                      ignoreW = FALSE)
                   assay(out, "residuals") <- t(devres)
               }
 
               if (imputedValues){
-                  imputed <- imputeZeros(fitted_model, t(assay(Y)))
+                  imputed <- imputeZeros(fitted_model, t(dataY))
                   assay(out, "imputedValues") <- t(imputed)
               }
 
@@ -195,8 +216,7 @@ setMethod("zinbwave", "SummarizedExperiment",
               }
 
               if (observationalWeights) {
-                  weights <- computeObservationalWeights(fitted_model,
-                                                         assay(Y))
+                  weights <- computeObservationalWeights(fitted_model, dataY)
 
                   dimnames(weights) <- dimnames(out)
 

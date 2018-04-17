@@ -9,7 +9,7 @@ gene and cell-level covariates.}
 \usage{
 zinbwave(Y, ...)
 
-\S4method{zinbwave}{SummarizedExperiment}(Y, X, V, fitted_model,
+\S4method{zinbwave}{SummarizedExperiment}(Y, X, V, fitted_model, which_assay,
   commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
   maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
   BPPARAM = BiocParallel::bpparam(), normalizedValues = TRUE,
@@ -34,6 +34,10 @@ SummarizedExperiment object, V can be a formula using the variables in the
 rowData slot of Y.}
 
 \item{fitted_model}{a \code{\link{ZinbModel}} object.}
+
+\item{which_assay}{numeric or character. Which assay of Y to use. If missing,
+if `assayNames(Y)` contains "counts" then that is used. Otherwise, the
+first assay is used.}
 
 \item{commondispersion}{Whether or not a single dispersion for all features
 is estimated (default TRUE).}

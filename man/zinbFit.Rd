@@ -9,9 +9,10 @@
 \usage{
 zinbFit(Y, ...)
 
-\S4method{zinbFit}{SummarizedExperiment}(Y, X, V, commondispersion = TRUE,
-  verbose = FALSE, nb.repeat.initialize = 2, maxiter.optimize = 25,
-  stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(), ...)
+\S4method{zinbFit}{SummarizedExperiment}(Y, X, V, which_assay,
+  commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
+  maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
+  BPPARAM = BiocParallel::bpparam(), ...)
 
 \S4method{zinbFit}{matrix}(Y, X, V, commondispersion = TRUE,
   verbose = FALSE, nb.repeat.initialize = 2, maxiter.optimize = 25,
@@ -32,6 +33,9 @@ colData slot of Y.}
 per row. If missing, V will contain only an intercept. If Y is a
 SummarizedExperiment object, V can be a formula using the variables in the
 rowData slot of Y.}
+
+\item{which_assay}{numeric or character. Which assay of Y to use (only if Y
+is a SummarizedExperiment).}
 
 \item{commondispersion}{Whether or not a single dispersion for all features
 is estimated (default TRUE).}
@@ -67,6 +71,9 @@ This means that by default the model is fitted with \code{X_mu =
   X_pi = 1_n} and \code{V_mu = V_pi = 1_J}. If the user explicitly passes the
   design matrices, this behavior is overwritten, i.e., the user needs to
   explicitly include the intercept in the design matrices.
+
+If Y is a Summarized experiment, the function uses the assay named
+  "counts", if any, or the first assay.
 }
 \section{Methods (by class)}{
 \itemize{
