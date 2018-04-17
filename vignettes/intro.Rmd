@@ -117,6 +117,12 @@ head(vars)
 fluidigm <- fluidigm[names(vars)[1:100],]
 ```
 
+Before proceeding, we rename the first assay of `fluidigm` "counts" to avoid needing to specify which assay we should use for the `zinbwave` workflow. This is an optional step.
+
+```{r rename}
+assayNames(fluidigm)[1] <- "counts"
+```
+
 # ZINB-WaVE
 
 The easiest way to obtain the low-dimensional representation of the data with ZINB-WaVE is to use the `zinbwave` function. This function takes as input a `SummarizedExperiment` object and returns a `SingleCellExperiment` object.
@@ -312,6 +318,38 @@ Note that `DESeq2`'s default normalization procedure is based on geometric means
 The `phyloseq` normalization procedure can be applied by setting the argument `type` equal to `poscounts` in `DESeq`. 
 
 For UMI data, for which the expected counts may be very low, the likelihood ratio test implemented in `nbinomLRT` should be used. For other protocols (i.e., non-UMI), the Wald test in `nbinomWaldTest` can be used, with null distribution a t-distribution with degrees of freedom corrected by the observational weights. In both cases, we recommend the minimum expected count to be set to a small value (e.g., `minmu=1e-6`).
+
+# Using `zinbwave` with Seurat
+
+The factors inferred in the `zinbwave` model can be added as one of the low dimensional data representations in the `Seurat` object, for instance to find subpopulations using Seurat's cluster analysis method.
+
+Note that the following workflow has only been tested with Seurat's version 2.3.0.
+
+Here we create a simple Seurat object with the raw data. Please, refer to the Seurat's vignettes for a typical analysis, which includes filtering, normalization, etc.
+
+```{r seurat}
+library(Seurat)
+
+seu <- CreateSeuratObject(raw.data = counts(fluidigm_zinb))
+```
+
+We can then add our `zinbwave` factors in the Seurat object.
+
+```{r seurat2}
+seu <- SetDimReduction(object = seu, reduction.type = "zinbwave", 
+                       slot = "cell.embeddings",
+                       new.data = reducedDim(fluidigm_zinb, "zinbwave"))
+seu <- SetDimReduction(object = seu, reduction.type = "zinbwave", slot = "key",
+                       new.data = "zinbwave")
+```
+
+Finally, we can use the `zinbwave` factors for cluster analysis.
+
+```{r seurat3}
+seu <- FindClusters(object = seu, reduction.type = "zinbwave", 
+                    dims.use = 1:2, #this should match K
+                    resolution = 0.6, print.output = 0, save.SNN = TRUE)
+```
 
 # A note on performance and parallel computing
 
