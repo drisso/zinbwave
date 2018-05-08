@@ -9,7 +9,8 @@ gene and cell-level covariates.}
 \usage{
 zinbwave(Y, ...)
 
-\S4method{zinbwave}{SummarizedExperiment}(Y, X, V, fitted_model, which_assay,
+\S4method{zinbwave}{SummarizedExperiment}(Y, X, V, K = 0, fitted_model,
+  which_assay, which_genes = rownames(Y), ngenes = min(1000, NROW(Y)),
   commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
   maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
   BPPARAM = BiocParallel::bpparam(), normalizedValues = TRUE,
@@ -33,11 +34,19 @@ per row. If missing, V will contain only an intercept. If Y is a
 SummarizedExperiment object, V can be a formula using the variables in the
 rowData slot of Y.}
 
+\item{K}{integer. Number of latent factors.}
+
 \item{fitted_model}{a \code{\link{ZinbModel}} object.}
 
 \item{which_assay}{numeric or character. Which assay of Y to use. If missing,
 if `assayNames(Y)` contains "counts" then that is used. Otherwise, the
 first assay is used.}
+
+\item{which_genes}{character. Which genes to use to estimate W (see details).
+Ignored if \code{fitted_model} is provided.}
+
+\item{ngenes}{numeric. If \code{which_genes = "most_var"}, how many variable
+genes to use. Default: 1000.}
 
 \item{commondispersion}{Whether or not a single dispersion for all features
 is estimated (default TRUE).}
@@ -84,13 +93,21 @@ For visualization (heatmaps, ...), please use the normalized values.
 It corresponds to the deviance residuals when the \code{W} is not included
 in the model but the gene and cell-level covariates are. As a results, when
 \code{W} is not included in the model, the deviance residuals should capture
-the biology.
+the biology. Note that we do not recommend to use the normalized values for
+any downstream analysis (such as clustering, or differential expression), but
+only for visualization.
 
 If one has already fitted a model using \code{\link{ZinbModel}},
 the object containing such model can be used as input of \code{zinbwave} to
 save the resulting W into a \code{SummarizedExperiment} and optionally
 compute residuals and normalized values, without the need for re-fitting the
 model.
+
+By default \code{zinbwave} uses all genes to estimate \code{W}.
+  However, we recommend to use the top 1,000 most variable genes for this
+  step. In general, a user can specify any custom set of genes to be used to
+  estimate \code{W}, by specifying either a vector of gene names, or a single
+  character string corresponding to a column of the \code{rowData}.
 }
 \section{Methods (by class)}{
 \itemize{

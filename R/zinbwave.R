@@ -110,10 +110,15 @@ imputeZeros <- function(model, x) {
 #'   per row. If missing, V will contain only an intercept. If Y is a
 #'   SummarizedExperiment object, V can be a formula using the variables in the
 #'   rowData slot of Y.
+#' @param K integer. Number of latent factors.
 #' @param fitted_model a \code{\link{ZinbModel}} object.
 #' @param which_assay numeric or character. Which assay of Y to use. If missing,
 #'   if `assayNames(Y)` contains "counts" then that is used. Otherwise, the
 #'   first assay is used.
+#' @param which_genes character. Which genes to use to estimate W (see details).
+#'   Ignored if \code{fitted_model} is provided.
+#' @param ngenes numeric. If \code{which_genes = "most_var"}, how many variable
+#'   genes to use. Default: 1000.
 #' @param commondispersion Whether or not a single dispersion for all features
 #'   is estimated (default TRUE).
 #' @param BPPARAM object of class \code{bpparamClass} that specifies the
@@ -140,13 +145,21 @@ imputeZeros <- function(model, x) {
 #' It corresponds to the deviance residuals when the \code{W} is not included
 #' in the model but the gene and cell-level covariates are. As a results, when
 #' \code{W} is not included in the model, the deviance residuals should capture
-#' the biology.
+#' the biology. Note that we do not recommend to use the normalized values for
+#' any downstream analysis (such as clustering, or differential expression), but
+#' only for visualization.
 #'
 #' @details If one has already fitted a model using \code{\link{ZinbModel}},
 #' the object containing such model can be used as input of \code{zinbwave} to
 #' save the resulting W into a \code{SummarizedExperiment} and optionally
 #' compute residuals and normalized values, without the need for re-fitting the
 #' model.
+#'
+#' @details By default \code{zinbwave} uses all genes to estimate \code{W}.
+#'   However, we recommend to use the top 1,000 most variable genes for this
+#'   step. In general, a user can specify any custom set of genes to be used to
+#'   estimate \code{W}, by specifying either a vector of gene names, or a single
+#'   character string corresponding to a column of the \code{rowData}.
 #'
 #' @import SummarizedExperiment
 #' @import SingleCellExperiment
@@ -157,7 +170,9 @@ imputeZeros <- function(model, x) {
 #'
 #' m <- zinbwave(se, X="~bio")
 setMethod("zinbwave", "SummarizedExperiment",
-          function(Y, X, V, fitted_model, which_assay,
+          function(Y, X, V, K=0, fitted_model, which_assay,
+                   which_genes = rownames(Y),
+                   ngenes = min(1000, NROW(Y)),
                    commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
@@ -166,12 +181,47 @@ setMethod("zinbwave", "SummarizedExperiment",
                    imputedValues = FALSE,
                    observationalWeights = TRUE, ...) {
 
+              if(length(which_genes) == 1) {
+                  if(!which_genes %in% colnames(rowData)) {
+                      stop("if `which_genes` has length 1, it must be the name of a column of `rowData(Y)`.")
+                  }
+              }
+
+              two_models <- FALSE
+
               if(missing(fitted_model)) {
-                  fitted_model <- zinbFit(Y, X, V, which_assay,
-                                          commondispersion,
-                                          verbose, nb.repeat.initialize,
-                                          maxiter.optimize,
-                                          stop.epsilon.optimize, BPPARAM, ...)
+
+                  if(!all(rownames(Y) %in% which_genes)) {
+
+                      two_models <- TRUE
+
+                      if(length(which_genes) == 1) {
+                          which_genes <- rowData(Y)$which_genes
+                      }
+
+                      fitted_model_W <- zinbFit(Y[which_genes,], X, V, K,
+                                                which_assay, commondispersion,
+                                                verbose, nb.repeat.initialize,
+                                                maxiter.optimize,
+                                                stop.epsilon.optimize, BPPARAM,
+                                                ...)
+
+                      fitted_model <- zinbFit(Y, X, V, K = 0,
+                                              which_assay, commondispersion,
+                                              verbose, nb.repeat.initialize,
+                                              maxiter.optimize,
+                                              stop.epsilon.optimize, BPPARAM,
+                                              ...)
+
+                  } else {
+
+                      fitted_model <- zinbFit(Y, X, V, K,
+                                              which_assay, commondispersion,
+                                              verbose, nb.repeat.initialize,
+                                              maxiter.optimize,
+                                              stop.epsilon.optimize, BPPARAM,
+                                              ...)
+                  }
               }
 
               out <- as(Y, "SingleCellExperiment")
@@ -209,10 +259,16 @@ setMethod("zinbwave", "SummarizedExperiment",
                   assay(out, "imputedValues") <- t(imputed)
               }
 
-              if (nFactors(fitted_model) > 0){
-                  W <- getW(fitted_model)
+              if(two_models) {
+                  W <- getW(fitted_model_W)
                   colnames(W) <- paste0('W', seq_len(nFactors(fitted_model)))
                   reducedDim(out, "zinbwave") <- W
+              } else {
+                  if (nFactors(fitted_model) > 0){
+                      W <- getW(fitted_model)
+                      colnames(W) <- paste0('W', seq_len(nFactors(fitted_model)))
+                      reducedDim(out, "zinbwave") <- W
+                  }
               }
 
               if (observationalWeights) {

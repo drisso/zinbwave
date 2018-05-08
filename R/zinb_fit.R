@@ -13,7 +13,7 @@
 #'
 #' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)))
 setMethod("zinbFit", "SummarizedExperiment",
-          function(Y, X, V, which_assay,
+          function(Y, X, V, K, which_assay,
                    commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
@@ -58,7 +58,7 @@ setMethod("zinbFit", "SummarizedExperiment",
               }
 
               # Apply zinbFit on the assay of SummarizedExperiment
-              res <- zinbFit(dataY, X, V, commondispersion,
+              res <- zinbFit(dataY, X, V, K, commondispersion,
                              verbose, nb.repeat.initialize, maxiter.optimize,
                              stop.epsilon.optimize, BPPARAM, ...)
 
@@ -77,6 +77,7 @@ setMethod("zinbFit", "SummarizedExperiment",
 #'   per row. If missing, V will contain only an intercept. If Y is a
 #'   SummarizedExperiment object, V can be a formula using the variables in the
 #'   rowData slot of Y.
+#' @param K integer. Number of latent factors.
 #' @param commondispersion Whether or not a single dispersion for all features
 #'   is estimated (default TRUE).
 #' @param BPPARAM object of class \code{bpparamClass} that specifies the
@@ -110,7 +111,7 @@ setMethod("zinbFit", "SummarizedExperiment",
 #' m <- zinbFit(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
 #'              X=model.matrix(~bio))
 setMethod("zinbFit", "matrix",
-          function(Y, X, V, commondispersion=TRUE, verbose=FALSE,
+          function(Y, X, V, K, commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(), ...) {
@@ -125,7 +126,7 @@ setMethod("zinbFit", "matrix",
 
     # Create a ZinbModel object
     if (verbose) {message("Create model:")}
-    m <- zinbModel(n=NROW(Y), J=NCOL(Y), X=X, V=V, ...)
+    m <- zinbModel(n=NROW(Y), J=NCOL(Y), X=X, V=V, K=K, ...)
     if (verbose) {message("ok")}
 
     # Initialize the parameters

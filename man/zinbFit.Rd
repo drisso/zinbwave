@@ -9,12 +9,12 @@
 \usage{
 zinbFit(Y, ...)
 
-\S4method{zinbFit}{SummarizedExperiment}(Y, X, V, which_assay,
+\S4method{zinbFit}{SummarizedExperiment}(Y, X, V, K, which_assay,
   commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
   maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
   BPPARAM = BiocParallel::bpparam(), ...)
 
-\S4method{zinbFit}{matrix}(Y, X, V, commondispersion = TRUE,
+\S4method{zinbFit}{matrix}(Y, X, V, K, commondispersion = TRUE,
   verbose = FALSE, nb.repeat.initialize = 2, maxiter.optimize = 25,
   stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(), ...)
 }
@@ -33,6 +33,8 @@ colData slot of Y.}
 per row. If missing, V will contain only an intercept. If Y is a
 SummarizedExperiment object, V can be a formula using the variables in the
 rowData slot of Y.}
+
+\item{K}{integer. Number of latent factors.}
 
 \item{which_assay}{numeric or character. Which assay of Y to use (only if Y
 is a SummarizedExperiment).}
