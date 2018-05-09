@@ -47,6 +47,9 @@ setMethod("zinbsurf", "SummarizedExperiment",
           function(Y, X, V, K, which_assay, which_genes, prop_fit = .1,
                    BPPARAM=BiocParallel::bpparam(), verbose = FALSE, ...) {
 
+              if(prop_fit <= 0 | prop_fit >=1) {
+                  stop("`prop_fit` must be in (0, 1).")
+              }
               if(is.null(colnames(Y))) {
                   stop("to use `zinbsurf` `Y` needs to have colnames.")
               }

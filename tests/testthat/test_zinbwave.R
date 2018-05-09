@@ -41,6 +41,15 @@ test_that("zinbwave computes residuals and normalized values", {
     expect_true("imputedValues" %in% names(assays(m1)))
 })
 
+test_that("one-dimensional W", {
+    se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+                               colData = data.frame(bio = gl(2, 3)))
+
+    expect_silent(fit <- zinbwave(se, K = 1, which_assay = 1))
+
+    expect_equal(NCOL(reducedDim(fit)), 1)
+})
+
 test_that("zinbwave works with slot counts", {
 
     cc <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
