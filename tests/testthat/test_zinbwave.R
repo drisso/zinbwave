@@ -82,3 +82,56 @@ test_that("zinbwave works without slot counts", {
     expect_silent(m2 <- zinbwave(se, K = 0, which_assay = "assay2"))
 
 })
+
+test_that("zinbwave works with subset of genes", {
+
+    cc <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
+    rownames(cc) <- paste0("gene", 1:10)
+    wh_genes <- c(rep(TRUE, 2), rep(FALSE, 8))
+    se <- SummarizedExperiment(assays = list(counts = cc),
+                               colData = data.frame(bio = gl(2, 3)),
+                               rowData = data.frame(wh_genes = wh_genes))
+
+    ## check that it works with all genes
+    set.seed(123)
+    expect_silent(m1 <- zinbwave(se, K=1))
+    set.seed(123)
+    expect_silent(m2 <- zinbwave(se, K=1, which_genes = rownames(cc)))
+    set.seed(123)
+    expect_silent(m3 <- zinbwave(se, K=1, which_genes = 1:10))
+    set.seed(123)
+    expect_silent(m4 <- zinbwave(se, K=1, which_genes = rep(TRUE, 10)))
+
+    expect_equal(m1, m2)
+    expect_equal(m1, m3)
+    expect_equal(m1, m4)
+
+    ## check that it works with both a vector and a rowData column
+    set.seed(155)
+    expect_silent(m1 <- zinbwave(se, K=1, which_genes = wh_genes))
+    set.seed(155)
+    expect_silent(m2 <- zinbwave(se, K=1, which_genes = "wh_genes"))
+
+    expect_equal(m1, m2)
+
+    ## check with no refit
+    set.seed(155)
+    expect_silent(m1 <- zinbwave(se, K=1, which_genes = wh_genes,
+                                 observationalWeights = FALSE))
+    set.seed(155)
+    expect_silent(m2 <- zinbwave(se, K=1, which_genes = wh_genes))
+
+    expect_equal(reducedDims(m1), reducedDims(m2))
+
+    ## check do nothing
+    m0 <- zinbwave(se, K=0, observationalWeights=FALSE)
+    expect_equal(as(se, "SingleCellExperiment"), m0)
+
+    ## check with wrong genes
+    expect_error(m1 <- zinbwave(se, K=1, which_genes = c("gene1", "gene11")),
+                 "index out of bounds")
+
+    expect_error(m1 <- zinbwave(se, K=1, which_genes = "my_genes"),
+                 "it must be the name of a column")
+
+})

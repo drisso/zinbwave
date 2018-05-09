@@ -110,15 +110,14 @@ imputeZeros <- function(model, x) {
 #'   per row. If missing, V will contain only an intercept. If Y is a
 #'   SummarizedExperiment object, V can be a formula using the variables in the
 #'   rowData slot of Y.
-#' @param K integer. Number of latent factors.
+#' @param K integer. Number of latent factors. Specify \code{K = 0} if only
+#'   computing observational weights.
 #' @param fitted_model a \code{\link{ZinbModel}} object.
 #' @param which_assay numeric or character. Which assay of Y to use. If missing,
 #'   if `assayNames(Y)` contains "counts" then that is used. Otherwise, the
 #'   first assay is used.
 #' @param which_genes character. Which genes to use to estimate W (see details).
 #'   Ignored if \code{fitted_model} is provided.
-#' @param ngenes numeric. If \code{which_genes = "most_var"}, how many variable
-#'   genes to use. Default: 1000.
 #' @param commondispersion Whether or not a single dispersion for all features
 #'   is estimated (default TRUE).
 #' @param BPPARAM object of class \code{bpparamClass} that specifies the
@@ -161,6 +160,11 @@ imputeZeros <- function(model, x) {
 #'   estimate \code{W}, by specifying either a vector of gene names, or a single
 #'   character string corresponding to a column of the \code{rowData}.
 #'
+#' @details Note that if both \code{which_genes} is specified and at least one
+#'   among \code{observationalWeights}, \code{imputedValues}, \code{residuals},
+#'   and \code{normalizedValues} is \code{TRUE}, the model needs to be fit
+#'   twice.
+#'
 #' @import SummarizedExperiment
 #' @import SingleCellExperiment
 #'
@@ -172,7 +176,6 @@ imputeZeros <- function(model, x) {
 setMethod("zinbwave", "SummarizedExperiment",
           function(Y, X, V, K=0, fitted_model, which_assay,
                    which_genes,
-                   ngenes = min(1000, NROW(Y)),
                    commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
@@ -183,17 +186,14 @@ setMethod("zinbwave", "SummarizedExperiment",
 
               if(missing(fitted_model)) {
 
-                  if(missing(which_genes)) {
+                  if(missing(which_genes) | K == 0) {
                       YY <- Y
                   } else {
                       if(length(which_genes) == 1) {
-                          if(!which_genes %in% colnames(rowData)) {
+                          if(!which_genes %in% colnames(rowData(Y))) {
                               stop("if `which_genes` has length 1, it must be the name of a column of `rowData(Y)`.")
                           }
-                      }
-
-                      if(length(which_genes) == 1) {
-                          which_genes <- rowData(Y)$which_genes
+                          which_genes <- rowData(Y)[,which_genes]
                       }
 
                       YY <- Y[which_genes,]
@@ -232,7 +232,7 @@ setMethod("zinbwave", "SummarizedExperiment",
               }
 
               refit <- any(c(observationalWeights, normalizedValues, residuals,
-                             imputedValues)) & !missing(which_genes)
+                             imputedValues)) & !missing(which_genes) & K > 0
 
               if(refit) {
                   fitted_model <- zinbFit(Y, X, V, K = 0,

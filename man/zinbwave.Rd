@@ -10,12 +10,11 @@ gene and cell-level covariates.}
 zinbwave(Y, ...)
 
 \S4method{zinbwave}{SummarizedExperiment}(Y, X, V, K = 0, fitted_model,
-  which_assay, which_genes, ngenes = min(1000, NROW(Y)),
-  commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
-  maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
-  BPPARAM = BiocParallel::bpparam(), normalizedValues = FALSE,
-  residuals = FALSE, imputedValues = FALSE, observationalWeights = TRUE,
-  ...)
+  which_assay, which_genes, commondispersion = TRUE, verbose = FALSE,
+  nb.repeat.initialize = 2, maxiter.optimize = 25,
+  stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(),
+  normalizedValues = FALSE, residuals = FALSE, imputedValues = FALSE,
+  observationalWeights = TRUE, ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns). Currently implemented
@@ -34,7 +33,8 @@ per row. If missing, V will contain only an intercept. If Y is a
 SummarizedExperiment object, V can be a formula using the variables in the
 rowData slot of Y.}
 
-\item{K}{integer. Number of latent factors.}
+\item{K}{integer. Number of latent factors. Specify \code{K = 0} if only
+computing observational weights.}
 
 \item{fitted_model}{a \code{\link{ZinbModel}} object.}
 
@@ -44,9 +44,6 @@ first assay is used.}
 
 \item{which_genes}{character. Which genes to use to estimate W (see details).
 Ignored if \code{fitted_model} is provided.}
-
-\item{ngenes}{numeric. If \code{which_genes = "most_var"}, how many variable
-genes to use. Default: 1000.}
 
 \item{commondispersion}{Whether or not a single dispersion for all features
 is estimated (default TRUE).}
@@ -108,6 +105,11 @@ By default \code{zinbwave} uses all genes to estimate \code{W}.
   step. In general, a user can specify any custom set of genes to be used to
   estimate \code{W}, by specifying either a vector of gene names, or a single
   character string corresponding to a column of the \code{rowData}.
+
+Note that if both \code{which_genes} is specified and at least one
+  among \code{observationalWeights}, \code{imputedValues}, \code{residuals},
+  and \code{normalizedValues} is \code{TRUE}, the model needs to be fit
+  twice.
 }
 \section{Methods (by class)}{
 \itemize{
