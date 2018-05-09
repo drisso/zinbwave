@@ -171,60 +171,49 @@ imputeZeros <- function(model, x) {
 #' m <- zinbwave(se, X="~bio")
 setMethod("zinbwave", "SummarizedExperiment",
           function(Y, X, V, K=0, fitted_model, which_assay,
-                   which_genes = rownames(Y),
+                   which_genes,
                    ngenes = min(1000, NROW(Y)),
                    commondispersion=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(),
-                   normalizedValues = TRUE, residuals = FALSE,
+                   normalizedValues = FALSE, residuals = FALSE,
                    imputedValues = FALSE,
                    observationalWeights = TRUE, ...) {
 
-              if(length(which_genes) == 1) {
-                  if(!which_genes %in% colnames(rowData)) {
-                      stop("if `which_genes` has length 1, it must be the name of a column of `rowData(Y)`.")
-                  }
-              }
-
-              two_models <- FALSE
-
               if(missing(fitted_model)) {
 
-                  if(!all(rownames(Y) %in% which_genes)) {
-
-                      two_models <- TRUE
+                  if(missing(which_genes)) {
+                      YY <- Y
+                  } else {
+                      if(length(which_genes) == 1) {
+                          if(!which_genes %in% colnames(rowData)) {
+                              stop("if `which_genes` has length 1, it must be the name of a column of `rowData(Y)`.")
+                          }
+                      }
 
                       if(length(which_genes) == 1) {
                           which_genes <- rowData(Y)$which_genes
                       }
 
-                      fitted_model_W <- zinbFit(Y[which_genes,], X, V, K,
-                                                which_assay, commondispersion,
-                                                verbose, nb.repeat.initialize,
-                                                maxiter.optimize,
-                                                stop.epsilon.optimize, BPPARAM,
-                                                ...)
-
-                      fitted_model <- zinbFit(Y, X, V, K = 0,
-                                              which_assay, commondispersion,
-                                              verbose, nb.repeat.initialize,
-                                              maxiter.optimize,
-                                              stop.epsilon.optimize, BPPARAM,
-                                              ...)
-
-                  } else {
-
-                      fitted_model <- zinbFit(Y, X, V, K,
-                                              which_assay, commondispersion,
-                                              verbose, nb.repeat.initialize,
-                                              maxiter.optimize,
-                                              stop.epsilon.optimize, BPPARAM,
-                                              ...)
+                      YY <- Y[which_genes,]
                   }
+
+                  fitted_model <- zinbFit(YY, X, V, K,
+                                          which_assay, commondispersion,
+                                          verbose, nb.repeat.initialize,
+                                          maxiter.optimize,
+                                          stop.epsilon.optimize, BPPARAM,
+                                          ...)
               }
 
               out <- as(Y, "SingleCellExperiment")
+
+              if (nFactors(fitted_model) > 0){
+                  W <- getW(fitted_model)
+                  colnames(W) <- paste0('W', seq_len(nFactors(fitted_model)))
+                  reducedDim(out, "zinbwave") <- W
+              }
 
               if(missing(which_assay)) {
                   if("counts" %in% assayNames(Y)) {
@@ -240,6 +229,18 @@ setMethod("zinbwave", "SummarizedExperiment",
                   } else {
                       dataY <- assay(Y, which_assay)
                   }
+              }
+
+              refit <- any(c(observationalWeights, normalizedValues, residuals,
+                             imputedValues)) & !missing(which_genes)
+
+              if(refit) {
+                  fitted_model <- zinbFit(Y, X, V, K = 0,
+                                          which_assay, commondispersion,
+                                          verbose, nb.repeat.initialize,
+                                          maxiter.optimize,
+                                          stop.epsilon.optimize, BPPARAM,
+                                          ...)
               }
 
               if (normalizedValues){
@@ -259,23 +260,9 @@ setMethod("zinbwave", "SummarizedExperiment",
                   assay(out, "imputedValues") <- t(imputed)
               }
 
-              if(two_models) {
-                  W <- getW(fitted_model_W)
-                  colnames(W) <- paste0('W', seq_len(nFactors(fitted_model)))
-                  reducedDim(out, "zinbwave") <- W
-              } else {
-                  if (nFactors(fitted_model) > 0){
-                      W <- getW(fitted_model)
-                      colnames(W) <- paste0('W', seq_len(nFactors(fitted_model)))
-                      reducedDim(out, "zinbwave") <- W
-                  }
-              }
-
               if (observationalWeights) {
                   weights <- computeObservationalWeights(fitted_model, dataY)
-
                   dimnames(weights) <- dimnames(out)
-
                   assay(out, "weights") <- weights
               }
 

@@ -10,10 +10,10 @@ gene and cell-level covariates.}
 zinbwave(Y, ...)
 
 \S4method{zinbwave}{SummarizedExperiment}(Y, X, V, K = 0, fitted_model,
-  which_assay, which_genes = rownames(Y), ngenes = min(1000, NROW(Y)),
+  which_assay, which_genes, ngenes = min(1000, NROW(Y)),
   commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
   maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
-  BPPARAM = BiocParallel::bpparam(), normalizedValues = TRUE,
+  BPPARAM = BiocParallel::bpparam(), normalizedValues = FALSE,
   residuals = FALSE, imputedValues = FALSE, observationalWeights = TRUE,
   ...)
 }
