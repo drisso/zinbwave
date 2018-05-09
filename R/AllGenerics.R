@@ -530,4 +530,19 @@ setGeneric(
     }
 )
 
-
+#' Perform dimensionality reduction using a ZINB regression model for large
+#' datasets.
+#'
+#' Given an object with the data, it performs dimensionality reduction using a
+#' ZINB regression model with gene and cell-level covariates on a random subset
+#' of the data. It then projects the remaining data onto the lower dimensional
+#' space.
+#'
+#' @param Y The data (genes in rows, samples in columns). Currently implemented
+#'   only for \code{SummarizedExperiment}.
+#' @param ... Additional parameters to describe the model, see
+#'   \code{\link{zinbModel}}.
+#' @return An object of class \code{SingleCellExperiment}; the dimensionality
+#'   reduced matrix is stored in the \code{reducedDims} slot.
+#' @export
+setGeneric("zinbsurf", function(Y, ...) standardGeneric("zinbsurf"))
