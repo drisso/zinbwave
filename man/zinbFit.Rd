@@ -5,6 +5,7 @@
 \alias{zinbFit}
 \alias{zinbFit,SummarizedExperiment-method}
 \alias{zinbFit,matrix-method}
+\alias{zinbFit,sparseMatrix-method}
 \title{Fit a ZINB regression model}
 \usage{
 zinbFit(Y, ...)
@@ -17,6 +18,8 @@ zinbFit(Y, ...)
 \S4method{zinbFit}{matrix}(Y, X, V, K, commondispersion = TRUE,
   verbose = FALSE, nb.repeat.initialize = 2, maxiter.optimize = 25,
   stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(), ...)
+
+\S4method{zinbFit}{sparseMatrix}(Y, ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns).}
@@ -76,6 +79,8 @@ This means that by default the model is fitted with \code{X_mu =
 
 If Y is a Summarized experiment, the function uses the assay named
   "counts", if any, or the first assay.
+
+Currently, this calls the zinbFit method on as.matrix(Y)
 }
 \section{Methods (by class)}{
 \itemize{
@@ -83,6 +88,8 @@ If Y is a Summarized experiment, the function uses the assay named
 \code{\link[SummarizedExperiment]{SummarizedExperiment}}.
 
 \item \code{matrix}: Y is a matrix of counts (genes in rows).
+
+\item \code{sparseMatrix}: Y is a sparse matrix of counts (genes in rows).
 }}
 
 \examples{

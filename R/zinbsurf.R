@@ -141,6 +141,9 @@ setMethod("zinbsurf", "SummarizedExperiment",
                   }
               }
 
+              ## realize in memory or make non-sparse
+              dataY <- as.matrix(dataY)
+
               if(verbose) {
                   message("Projecting the remaining ", length(out_idx),
                           " cells.")

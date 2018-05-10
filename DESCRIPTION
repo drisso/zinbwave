@@ -31,7 +31,8 @@ Imports:
    softImpute,
    stats,
    genefilter,
-   edgeR
+   edgeR,
+   Matrix
 Suggests: 
     knitr,
     rmarkdown,

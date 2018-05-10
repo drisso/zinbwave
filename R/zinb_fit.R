@@ -146,6 +146,19 @@ setMethod("zinbFit", "matrix",
     m
 })
 
+#' @describeIn zinbFit Y is a sparse matrix of counts (genes in rows).
+#' @export
+#'
+#' @details Currently, if Y is a sparseMatrix, this calls the zinbFit method on
+#'   as.matrix(Y)
+#'
+#' @importClassesFrom Matrix  sparseMatrix
+setMethod("zinbFit", "sparseMatrix",
+          function(Y, ...) {
+              zinbFit(as.matrix(Y), ...)
+})
+
+
 #' Initialize the parameters of a ZINB regression model
 #'
 #' The initialization performs quick optimization of the parameters with several
