@@ -150,14 +150,14 @@ setMethod("zinbsurf", "SummarizedExperiment",
               }
 
               newfit <- matrix(unlist(
-                  lapply(seq_along(out_idx), function(i) {
+                  bplapply(seq_along(out_idx), function(i) {
                       optimleft_fun(getGamma_mu(newm)[,i], getGamma_pi(newm)[,i],
                                     t(getW(newm)[i,]), dataY[,i], getV_mu(fit),
                                     getAlpha_mu(fit), getX_mu(newm)[i,],
                                     getBeta_mu(fit), newm@O_mu[i,], getV_pi(fit),
                                     getAlpha_pi(fit), getX_pi(newm)[i,], getBeta_pi(fit),
                                     newm@O_pi[i,], getZeta(fit), epsilonleft)
-                  })), nrow=sum(nleft))
+                  }, BPPARAM = BPPARAM)), nrow=sum(nleft))
 
               newW <- t(newfit[-(seq_len(sum(nleft[1:2]))), ,drop = FALSE])
               W <- rbind(getW(fit), newW)
