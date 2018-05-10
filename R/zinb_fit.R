@@ -152,8 +152,8 @@ setMethod("zinbFit", "matrix",
 #' @details Currently, if Y is a sparseMatrix, this calls the zinbFit method on
 #'   as.matrix(Y)
 #'
-#' @importClassesFrom Matrix  sparseMatrix
-setMethod("zinbFit", "sparseMatrix",
+#' @importClassesFrom Matrix dgCMatrix
+setMethod("zinbFit", "dgCMatrix",
           function(Y, ...) {
               zinbFit(as.matrix(Y), ...)
 })
