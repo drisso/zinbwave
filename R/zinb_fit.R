@@ -456,8 +456,16 @@ zinbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
 
         # Evaluate total penalized likelihood
         if (verbose) {
+            pen <- sum(getEpsilon_alpha(m) * (alpha_mu)^2)/2 +
+                sum(getEpsilon_alpha(m) * (alpha_pi)^2)/2 +
+                sum(getEpsilon_beta_mu(m) * (beta_mu)^2)/2 +
+                sum(getEpsilon_beta_pi(m) * (beta_pi)^2)/2 +
+                sum(getEpsilon_gamma_mu(m)*(gamma_mu)^2)/2 +
+                sum(getEpsilon_gamma_pi(m)*(gamma_pi)^2)/2 +
+                sum(getEpsilon_W(m)*t(W)^2)/2 +
+                getEpsilon_zeta(m)*var(zeta)/2
             message("After dispersion optimization = ",
-                loglik(m, Y) - penalty(m))
+                    zinb.loglik(Y, mu, exp(zeta), logitPi) - pen)
             }
 
         # 2. Optimize right factors
@@ -491,8 +499,22 @@ zinbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
         }
         # Evaluate total penalized likelihood
         if (verbose) {
+            itermu <- exp(X_mu %*% beta_mu + t(V_mu %*% gamma_mu) +
+                          W %*% alpha_mu + O_mu)
+
+            iterlP <- X_pi %*% beta_pi + t(V_pi %*% gamma_pi) +
+                W %*% alpha_pi + O_pi
+
+            pen <- sum(getEpsilon_alpha(m) * (alpha_mu)^2)/2 +
+                sum(getEpsilon_alpha(m) * (alpha_pi)^2)/2 +
+                sum(getEpsilon_beta_mu(m) * (beta_mu)^2)/2 +
+                sum(getEpsilon_beta_pi(m) * (beta_pi)^2)/2 +
+                sum(getEpsilon_gamma_mu(m)*(gamma_mu)^2)/2 +
+                sum(getEpsilon_gamma_pi(m)*(gamma_pi)^2)/2 +
+                sum(getEpsilon_W(m)*t(W)^2)/2 +
+                getEpsilon_zeta(m)*var(zeta)/2
             message("After right optimization = ",
-                loglik(m, Y)-penalty(m))
+                    zinb.loglik(Y, itermu, exp(zeta), iterlP) - pen)
             }
 
         # 3. Orthogonalize
@@ -506,8 +528,25 @@ zinbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
         }
 
         # Evaluate total penalized likelihood
-        if (verbose) {message("After orthogonalization = ",
-                          loglik(m, Y) - penalty(m))}
+        if (verbose) {
+            itermu <- exp(X_mu %*% beta_mu + t(V_mu %*% gamma_mu) +
+                              W %*% alpha_mu + O_mu)
+
+            iterlP <- X_pi %*% beta_pi + t(V_pi %*% gamma_pi) +
+                W %*% alpha_pi + O_pi
+
+            pen <- sum(getEpsilon_alpha(m) * (alpha_mu)^2)/2 +
+                sum(getEpsilon_alpha(m) * (alpha_pi)^2)/2 +
+                sum(getEpsilon_beta_mu(m) * (beta_mu)^2)/2 +
+                sum(getEpsilon_beta_pi(m) * (beta_pi)^2)/2 +
+                sum(getEpsilon_gamma_mu(m)*(gamma_mu)^2)/2 +
+                sum(getEpsilon_gamma_pi(m)*(gamma_pi)^2)/2 +
+                sum(getEpsilon_W(m)*t(W)^2)/2 +
+                getEpsilon_zeta(m)*var(zeta)/2
+
+            message("After orthogonalization = ",
+                    zinb.loglik(Y, itermu, exp(zeta), iterlP) - pen)
+        }
 
         # 4. Optimize left factors
         if (optimleft) {
@@ -536,8 +575,25 @@ zinbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
         }
 
         # Evaluate total penalized likelihood
-        if (verbose) {message("After left optimization = ",
-                          loglik(m, Y) - penalty(m))}
+        if (verbose) {
+            itermu <- exp(X_mu %*% beta_mu + t(V_mu %*% gamma_mu) +
+                              W %*% alpha_mu + O_mu)
+
+            iterlP <- X_pi %*% beta_pi + t(V_pi %*% gamma_pi) +
+                W %*% alpha_pi + O_pi
+
+            pen <- sum(getEpsilon_alpha(m) * (alpha_mu)^2)/2 +
+                sum(getEpsilon_alpha(m) * (alpha_pi)^2)/2 +
+                sum(getEpsilon_beta_mu(m) * (beta_mu)^2)/2 +
+                sum(getEpsilon_beta_pi(m) * (beta_pi)^2)/2 +
+                sum(getEpsilon_gamma_mu(m)*(gamma_mu)^2)/2 +
+                sum(getEpsilon_gamma_pi(m)*(gamma_pi)^2)/2 +
+                sum(getEpsilon_W(m)*t(W)^2)/2 +
+                getEpsilon_zeta(m)*var(zeta)/2
+
+            message("After left optimization = ",
+                    zinb.loglik(Y, itermu, exp(zeta), iterlP) - pen)
+        }
 
         # 5. Orthogonalize
         if (orthog) {
@@ -549,8 +605,25 @@ zinbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
             alpha_pi <- o$V[,(J+1):(2*J),drop=FALSE]
         }
         # Evaluate total penalized likelihood
-        if (verbose) {message("After orthogonalization = ",
-                          loglik(m, Y) - penalty(m))}
+        if (verbose) {
+            itermu <- exp(X_mu %*% beta_mu + t(V_mu %*% gamma_mu) +
+                              W %*% alpha_mu + O_mu)
+
+            iterlP <- X_pi %*% beta_pi + t(V_pi %*% gamma_pi) +
+                W %*% alpha_pi + O_pi
+
+            pen <- sum(getEpsilon_alpha(m) * (alpha_mu)^2)/2 +
+                sum(getEpsilon_alpha(m) * (alpha_pi)^2)/2 +
+                sum(getEpsilon_beta_mu(m) * (beta_mu)^2)/2 +
+                sum(getEpsilon_beta_pi(m) * (beta_pi)^2)/2 +
+                sum(getEpsilon_gamma_mu(m)*(gamma_mu)^2)/2 +
+                sum(getEpsilon_gamma_pi(m)*(gamma_pi)^2)/2 +
+                sum(getEpsilon_W(m)*t(W)^2)/2 +
+                getEpsilon_zeta(m)*var(zeta)/2
+
+            message("After orthogonalization = ",
+                    zinb.loglik(Y, itermu, exp(zeta), iterlP) - pen)
+        }
 
     }
 
