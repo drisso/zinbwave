@@ -109,11 +109,13 @@ setMethod("zinbsurf", "SummarizedExperiment",
                   Xsub <- X[sample_idx,]
                   Xout <- X[out_idx,]
 
-                  fit <- zinbFit(Ysub, Xsub, V, K, BPPARAM=BPPARAM, ...)
+                  fit <- zinbFit(Ysub, Xsub, V, K, BPPARAM=BPPARAM,
+                                 verbose = verbose, ...)
                   newm <- zinbModel(n=NCOL(Yout), J=NROW(Yout),
                                     X = Xout, V = V, K = K, ...)
               } else {
-                  fit <- zinbFit(Ysub, X, V, K, BPPARAM=BPPARAM, ...)
+                  fit <- zinbFit(Ysub, X, V, K, BPPARAM=BPPARAM,
+                                 verbose = verbose, ...)
                   newm <- zinbModel(n=NCOL(Yout), J=NROW(Yout),
                                     X = X, V = V, K = K, ...)
               }
