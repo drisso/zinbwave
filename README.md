@@ -9,17 +9,19 @@ This package implements a zero-inflated negative binomial model for single-cell 
 
 The model is described in details in the paper:
 
-D. Risso, F. Perraudeau, S. Gribkova, S. Dudoit and JP. Vert (2017).
-ZINB-WaVE: A general and flexible method for signal extraction from single-cell RNA-seq data. bioRxiv. https://doi.org/10.1101/125112
+[D. Risso, F. Perraudeau, S. Gribkova, S. Dudoit and JP. Vert (2018).
+A general and flexible method for signal extraction from single-cell RNA-seq data. Nature Communications.](https://www.nature.com/articles/s41467-017-02554-5)
 
 ## Installation
 
+Since Bioconductor 3.7 the new recommended way to install Bioconductor packages is via the BiocManager package, available on CRAN:
+
 ```{r}
-source("https://bioconductor.org/biocLite.R")
-biocLite("zinbwave")
+install.packages("BiocManager")
+BiocManager::install("zinbwave")
 ```
 
-Note that `zinbwave` requires `R (>=3.4)` and `Bioconductor (>=3.6)`. Bioconductor 3.6 is currently the **devel version** of Bioconductor. See [here](https://www.bioconductor.org/developers/how-to/useDevel/) on how to install it.
+Note that `zinbwave` requires `R (>=3.4)` and `Bioconductor (>=3.6)`.
 
 In virtually all cases, installing from Bioconductor is recommended. However, if you want to install the development version of `zinbwave` from GitHub, you can do so with the following.
 
