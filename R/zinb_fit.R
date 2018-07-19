@@ -186,7 +186,8 @@ setMethod("zinbFit", "dgCMatrix",
 #' @export
 #' @importFrom glmnet glmnet
 #' @importFrom softImpute softImpute
-zinbInitialize <- function(m, Y, nb.repeat=2, BPPARAM=BiocParallel::bpparam()) {
+zinbInitialize <- function(m, Y, nb.repeat = 2,
+                           BPPARAM=BiocParallel::bpparam()) {
 
     n <- NROW(Y)
     J <- NCOL(Y)
@@ -262,9 +263,17 @@ zinbInitialize <- function(m, Y, nb.repeat=2, BPPARAM=BiocParallel::bpparam()) {
         D <- L - getX_mu(m) %*% beta_mu - t(getV_mu(m) %*% gamma_mu)
 
         # Find a low-rank approximation with trace-norm regularization
+        lambda <- sqrt(getEpsilon_W(m) * getEpsilon_alpha(m))[1]
         R <- softImpute::softImpute(D,
-                lambda=sqrt(getEpsilon_W(m) * getEpsilon_alpha(m))[1],
+                lambda=lambda,
                 rank.max=nFactors(m))
+
+        while(length(R$d) < nFactors(m)) {
+            lambda <- lambda/2
+            R <- softImpute::softImpute(D,
+                        lambda=lambda,
+                        rank.max=nFactors(m))
+        }
 
         # Orthogonalize to get W and alpha
         W <- (getEpsilon_alpha(m) / getEpsilon_W(m))[1]^(1/4) *
