@@ -17,11 +17,11 @@ vignette: >
 
 # Installation
 
-The recommended way to install the `zinbwave` package is via Bioconductor.
+The recommended way to install the `zinbwave` package is
 
 ```{r, eval=FALSE}
-source("https://bioconductor.org/biocLite.R")
-biocLite("zinbwave")
+install.packages("BiocManager")
+BiocManager::install("zinbwave")
 ```
 
 Note that `zinbwave` requires R (>=3.4) and Bioconductor (>=3.6).
