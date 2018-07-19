@@ -41,6 +41,23 @@ test_that("zinbwave computes residuals and normalized values", {
     expect_true("imputedValues" %in% names(assays(m1)))
 })
 
+test_that("zinbwave computes observational weihts", {
+    se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+                               colData = data.frame(bio = gl(2, 3)))
+
+    fit <- zinbFit(se, K = 2)
+    expect_warning(m1 <- zinbwave(se, fitted_model = fit,
+                                  observationalWeights = TRUE),
+                   "No assay named `counts`")
+
+    expect_true("weights" %in% names(assays(m1)))
+    expect_true(all(assay(m1, "weights") > 0))
+    expect_true(all(assay(m1, "weights") <= 1))
+
+    w <- computeObservationalWeights(m, assay(se))
+    expect_equivalent(w, assay(m1, "weights"))
+})
+
 test_that("one-dimensional W", {
     se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                                colData = data.frame(bio = gl(2, 3)))

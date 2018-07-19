@@ -45,6 +45,7 @@ computeObservationalWeights <- function(model, x){
     zinbwg <- ( (1 - pi) * nb_part ) / zinb_part
     zinbwg <- t(zinbwg)
     zinbwg[x > 0] <- 1
+    zinbwg[x < 1e-15] <- 1e-15
     zinbwg
 }
 
