@@ -4,7 +4,8 @@
 \alias{zinbInitialize}
 \title{Initialize the parameters of a ZINB regression model}
 \usage{
-zinbInitialize(m, Y, nb.repeat = 2, BPPARAM = BiocParallel::bpparam())
+zinbInitialize(m, Y, nb.repeat = 2, it.max = 100,
+  BPPARAM = BiocParallel::bpparam())
 }
 \arguments{
 \item{m}{The model of class ZinbModel}
@@ -13,6 +14,8 @@ zinbInitialize(m, Y, nb.repeat = 2, BPPARAM = BiocParallel::bpparam())
 
 \item{nb.repeat}{Number of iterations for the estimation of beta_mu and
 gamma_mu.}
+
+\item{it.max}{Maximum number of iterations in softImpute.}
 
 \item{BPPARAM}{object of class \code{bpparamClass} that specifies the
 back-end to be used for computations. See
