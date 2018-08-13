@@ -54,7 +54,7 @@ test_that("zinbwave computes observational weihts", {
     expect_true(all(assay(m1, "weights") > 0))
     expect_true(all(assay(m1, "weights") <= 1))
 
-    w <- computeObservationalWeights(m, assay(se))
+    w <- computeObservationalWeights(fit, assay(se))
     expect_equivalent(w, assay(m1, "weights"))
 })
 
