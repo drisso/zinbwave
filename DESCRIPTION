@@ -48,7 +48,7 @@ Suggests:
     Seurat
 VignetteBuilder: knitr
 LazyData: TRUE
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 biocViews:
   DimensionReduction,
   GeneExpression,

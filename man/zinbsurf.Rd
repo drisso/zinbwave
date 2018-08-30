@@ -9,8 +9,9 @@ datasets.}
 \usage{
 zinbsurf(Y, ...)
 
-\S4method{zinbsurf}{SummarizedExperiment}(Y, X, V, K, which_assay, which_genes,
-  prop_fit = 0.1, BPPARAM = BiocParallel::bpparam(), verbose = FALSE, ...)
+\S4method{zinbsurf}{SummarizedExperiment}(Y, X, V, K, which_assay,
+  which_genes, prop_fit = 0.1, BPPARAM = BiocParallel::bpparam(),
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns). Currently implemented

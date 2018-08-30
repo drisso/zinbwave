@@ -17,7 +17,8 @@ zinbFit(Y, ...)
 
 \S4method{zinbFit}{matrix}(Y, X, V, K, commondispersion = TRUE,
   verbose = FALSE, nb.repeat.initialize = 2, maxiter.optimize = 25,
-  stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(), ...)
+  stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(),
+  ...)
 
 \S4method{zinbFit}{dgCMatrix}(Y, ...)
 }

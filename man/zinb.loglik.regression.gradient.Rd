@@ -4,12 +4,12 @@
 \alias{zinb.loglik.regression.gradient}
 \title{Gradient of the penalized log-likelihood of the ZINB regression model}
 \usage{
-zinb.loglik.regression.gradient(alpha, Y, A.mu = matrix(nrow = length(Y), ncol
-  = 0), B.mu = matrix(nrow = length(Y), ncol = 0), C.mu = matrix(0, nrow =
-  length(Y), ncol = 1), A.pi = matrix(nrow = length(Y), ncol = 0),
-  B.pi = matrix(nrow = length(Y), ncol = 0), C.pi = matrix(0, nrow =
-  length(Y), ncol = 1), C.theta = matrix(0, nrow = length(Y), ncol = 1),
-  epsilon = 0)
+zinb.loglik.regression.gradient(alpha, Y, A.mu = matrix(nrow = length(Y),
+  ncol = 0), B.mu = matrix(nrow = length(Y), ncol = 0),
+  C.mu = matrix(0, nrow = length(Y), ncol = 1), A.pi = matrix(nrow =
+  length(Y), ncol = 0), B.pi = matrix(nrow = length(Y), ncol = 0),
+  C.pi = matrix(0, nrow = length(Y), ncol = 1), C.theta = matrix(0,
+  nrow = length(Y), ncol = 1), epsilon = 0)
 }
 \arguments{
 \item{alpha}{the vectors of parameters c(a.mu, a.pi, b) concatenated}
