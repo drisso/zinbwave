@@ -321,31 +321,24 @@ For UMI data, for which the expected counts may be very low, the likelihood rati
 
 # Using `zinbwave` with Seurat
 
-The factors inferred in the `zinbwave` model can be added as one of the low dimensional data representations in the `Seurat` object, for instance to find subpopulations using Seurat's cluster analysis method.
+The factors inferred in the `zinbwave` model can be used to find subpopulations using Seurat's cluster analysis method.
 
-Note that the following workflow has only been tested with Seurat's version 2.3.0.
+Note that the following workflow has only been tested with Seurat's version 2.3.4.
 
-Here we create a simple Seurat object with the raw data. Please, refer to the Seurat's vignettes for a typical analysis, which includes filtering, normalization, etc.
+Here we create a Seurat object starting from the `SingleCellExperiment` object. 
+Note that the coercion function requires that a slot named `logcounts` is present. This slot should contain the normalized data, hence we rename our `normalizedValues` slot to `logcounts`.
+
+Please, refer to the Seurat's vignettes for a typical analysis, which includes filtering, normalization, etc.
 
 ```{r seurat}
 library(Seurat)
-
-seu <- CreateSeuratObject(raw.data = counts(fluidigm_zinb))
+assayNames(fluidigm_norm)[5] <- "logcounts"
+seu <- as.seurat(fluidigm_norm)
 ```
 
-We can then add our `zinbwave` factors in the Seurat object.
+The object will include the `zinbwave` factors matrix as one of the dimensionality reduction slots, which we can use for cluster analysis.
 
 ```{r seurat2}
-seu <- SetDimReduction(object = seu, reduction.type = "zinbwave", 
-                       slot = "cell.embeddings",
-                       new.data = reducedDim(fluidigm_zinb, "zinbwave"))
-seu <- SetDimReduction(object = seu, reduction.type = "zinbwave", slot = "key",
-                       new.data = "zinbwave")
-```
-
-Finally, we can use the `zinbwave` factors for cluster analysis.
-
-```{r seurat3}
 seu <- FindClusters(object = seu, reduction.type = "zinbwave", 
                     dims.use = 1:2, #this should match K
                     resolution = 0.6, print.output = 0, save.SNN = TRUE)
