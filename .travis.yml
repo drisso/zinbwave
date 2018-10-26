@@ -39,6 +39,7 @@ notifications:
 ## Code coverage
 r_packages:
   - covr
+  - hdf5r
 
 ## BiocCheck
 bioc_packages:
