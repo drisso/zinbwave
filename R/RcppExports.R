@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #'@useDynLib zinbwave
-clog1pexp <- function(x) {
-    .Call('_zinbwave_clog1pexp', PACKAGE = 'zinbwave', x)
+clog1pexp <- function(x, c0 = -37.0, c1 = 18.0, c2 = 33.3) {
+    .Call('_zinbwave_clog1pexp', PACKAGE = 'zinbwave', x, c0, c1, c2)
 }
 
