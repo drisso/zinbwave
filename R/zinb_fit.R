@@ -185,7 +185,6 @@ setMethod("zinbFit", "dgCMatrix",
 #'              which_X_pi=1L, which_V_mu=1L, K=1)
 #' m <- zinbInitialize(m, Y)
 #' @export
-#' @importFrom glmnet glmnet
 #' @importFrom softImpute softImpute
 zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
                            BPPARAM=BiocParallel::bpparam()) {
@@ -736,7 +735,6 @@ zinbOptimizeDispersion <- function(J, mu, logitPi, epsilon,
 #' @param logitPi the vector of logit of the probabilities of the zero component
 #' @export
 #' @return the log-likelihood of the model.
-#' @importFrom copula log1pexp
 #' @importFrom stats dnbinom optim optimize rbinom rnbinom runif var
 #' @examples
 #' n <- 10
@@ -752,11 +750,11 @@ zinb.loglik <- function(Y, mu, theta, logitPi) {
     logPnb <- suppressWarnings(dnbinom(Y, size = theta, mu = mu, log = TRUE))
 
     # contribution of zero inflation
-    lognorm <- - copula::log1pexp(logitPi)
+    lognorm <- - log1pexp(logitPi)
 
     # log-likelihood
-    sum(logPnb[Y>0]) + sum(logPnb[Y==0] + copula::log1pexp(logitPi[Y==0] -
-                                                logPnb[Y==0])) + sum(lognorm)
+    sum(logPnb[Y>0]) + sum(logPnb[Y==0] + log1pexp(logitPi[Y==0] -
+                                                   logPnb[Y==0])) + sum(lognorm)
 }
 
 
@@ -1014,7 +1012,7 @@ zinb.loglik.regression.gradient <- function(alpha, Y,
     clogdens0 <- dnbinom(0, size = theta[Y0], mu = mu[Y0], log = TRUE)
     # dens0 <- muz[Y0] + exp(log(1 - muz[Y0]) + clogdens0)
     # More accurate: log(1-muz) is the following
-    lognorm <- -r$logitPi - copula::log1pexp(-r$logitPi)
+    lognorm <- -r$logitPi - log1pexp(-r$logitPi)
 
     dens0 <- muz[Y0] + exp(lognorm[Y0] + clogdens0)
 
