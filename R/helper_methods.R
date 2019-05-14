@@ -757,12 +757,16 @@ setMethod(
     }
 )
 
-# Copied and modified from log1pexp of the copula package by
+# Copied on 5/14/2019 from log1pexp of the copula package (v. 0.999.19) by
 # Marius Hofert, Ivan Kojadinovic, Martin Maechler, Jun Yan,
 # Johanna G. Neslehova
-# This version assumes that there are no NA's.
+# Copied here to avoid dependence on gsl which causes troubles.
 log1pexp <- function (x, c0 = -37, c1 = 18, c2 = 33.3)
 {
+    if (has.na <- any(ina <- is.na(x))) {
+        y <- x
+        x <- x[ok <- !ina]
+    }
     r <- exp(x)
     if (any(i <- c0 < x & (i1 <- x <= c1)))
         r[i] <- log1p(r[i])
@@ -770,5 +774,9 @@ log1pexp <- function (x, c0 = -37, c1 = 18, c2 = 33.3)
         r[i] <- x[i] + 1/r[i]
     if (any(i3 <- !i2))
         r[i3] <- x[i3]
-    r
+    if (has.na) {
+        y[ok] <- r
+        y
+    }
+    else r
 }
