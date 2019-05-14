@@ -25,12 +25,13 @@ Depends:
    SummarizedExperiment,
    SingleCellExperiment
 Imports:
-   BiocParallel,
-   softImpute,
-   stats,
-   genefilter,
-   edgeR,
-   Matrix
+    BiocParallel,
+    softImpute,
+    stats,
+    genefilter,
+    edgeR,
+    Matrix,
+    Rcpp
 Suggests: 
     knitr,
     rmarkdown,
@@ -56,3 +57,5 @@ biocViews: ImmunoOncology,
   Sequencing,
   SingleCell
 BugReports: https://github.com/drisso/zinbwave/issues
+LinkingTo: 
+    Rcpp

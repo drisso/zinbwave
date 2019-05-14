@@ -750,10 +750,10 @@ zinb.loglik <- function(Y, mu, theta, logitPi) {
     logPnb <- suppressWarnings(dnbinom(Y, size = theta, mu = mu, log = TRUE))
 
     # contribution of zero inflation
-    lognorm <- - log1pexp(logitPi)
+    lognorm <- - clog1pexp(logitPi)
 
     # log-likelihood
-    sum(logPnb[Y>0]) + sum(logPnb[Y==0] + log1pexp(logitPi[Y==0] -
+    sum(logPnb[Y>0]) + sum(logPnb[Y==0] + clog1pexp(logitPi[Y==0] -
                                                    logPnb[Y==0])) + sum(lognorm)
 }
 
@@ -1012,7 +1012,7 @@ zinb.loglik.regression.gradient <- function(alpha, Y,
     clogdens0 <- dnbinom(0, size = theta[Y0], mu = mu[Y0], log = TRUE)
     # dens0 <- muz[Y0] + exp(log(1 - muz[Y0]) + clogdens0)
     # More accurate: log(1-muz) is the following
-    lognorm <- -r$logitPi - log1pexp(-r$logitPi)
+    lognorm <- -r$logitPi - clog1pexp(-r$logitPi)
 
     dens0 <- muz[Y0] + exp(lognorm[Y0] + clogdens0)
 
