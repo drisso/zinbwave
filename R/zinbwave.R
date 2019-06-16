@@ -233,7 +233,8 @@ setMethod("zinbwave", "SummarizedExperiment",
               }
 
               refit <- any(c(observationalWeights, normalizedValues, residuals,
-                             imputedValues)) & (nrow(Y) != nrow(YY)) & K > 0
+                             imputedValues)) &
+                  (nrow(Y) != nFeatures(fitted_model)) & K > 0
 
               if(refit) {
                   fitted_model <- zinbFit(Y, X, V, K = 0,
