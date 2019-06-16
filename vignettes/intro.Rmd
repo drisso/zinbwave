@@ -81,7 +81,7 @@ To illustrate the methodology, we will make use of the Fluidigm C1 dataset of
 The data are publicly available as part of the [scRNAseq package](https://www.bioconductor.org/packages/release/data/experiment/html/scRNAseq.html), in the form of a `SummarizedExperiment` object.
 
 ```{r pollen}
-data("fluidigm")
+fluidigm <- ReprocessedFluidigmData()
 fluidigm
 
 table(colData(fluidigm)$Coverage_Type)
