@@ -80,6 +80,8 @@ setMethod("zinbFit", "SummarizedExperiment",
 #' @param K integer. Number of latent factors.
 #' @param commondispersion Whether or not a single dispersion for all features
 #'   is estimated (default TRUE).
+#' @param zeroinflation Whether or not a ZINB model should be fitted. If FALSE,
+#'   a negative binomial model is fitted instead.
 #' @param BPPARAM object of class \code{bpparamClass} that specifies the
 #'   back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -111,7 +113,8 @@ setMethod("zinbFit", "SummarizedExperiment",
 #' m <- zinbFit(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
 #'              X=model.matrix(~bio))
 setMethod("zinbFit", "matrix",
-          function(Y, X, V, K, commondispersion=TRUE, verbose=FALSE,
+          function(Y, X, V, K, commondispersion=TRUE,
+                   zeroinflation = TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(), ...) {
@@ -131,15 +134,29 @@ setMethod("zinbFit", "matrix",
 
     # Initialize the parameters
     if (verbose) {message("Initialize parameters:")}
-    m <- zinbInitialize(m, Y, nb.repeat=nb.repeat.initialize, BPPARAM=BPPARAM)
+    if(zeroinflation) {
+        m <- zinbInitialize(m, Y, nb.repeat=nb.repeat.initialize,
+                            BPPARAM=BPPARAM)
+    } else {
+        m <- nbInitialize(m, Y, nb.repeat=nb.repeat.initialize,
+                            BPPARAM=BPPARAM)
+    }
     if (verbose) {message("ok")}
 
     # Optimize parameters
     if (verbose) {message("Optimize parameters:")}
-    m <- zinbOptimize(m, Y, commondispersion=commondispersion,
-                      maxiter=maxiter.optimize,
-                      stop.epsilon=stop.epsilon.optimize,
-                      BPPARAM=BPPARAM, verbose=verbose)
+    if(zeroinflation) {
+        m <- zinbOptimize(m, Y, commondispersion=commondispersion,
+                          maxiter=maxiter.optimize,
+                          stop.epsilon=stop.epsilon.optimize,
+                          BPPARAM=BPPARAM, verbose=verbose)
+    } else {
+        m <- nbOptimize(m, Y, commondispersion=commondispersion,
+                          maxiter=maxiter.optimize,
+                          stop.epsilon=stop.epsilon.optimize,
+                          BPPARAM=BPPARAM, verbose=verbose)
+    }
+
     if (verbose) {message("ok")}
 
     validObject(m)

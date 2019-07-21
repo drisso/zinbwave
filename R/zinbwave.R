@@ -121,6 +121,8 @@ imputeZeros <- function(model, x) {
 #'   Ignored if \code{fitted_model} is provided.
 #' @param commondispersion Whether or not a single dispersion for all features
 #'   is estimated (default TRUE).
+#' @param zeroinflation Whether or not a ZINB model should be fitted. If FALSE,
+#'   a negative binomial model is fitted instead.
 #' @param BPPARAM object of class \code{bpparamClass} that specifies the
 #'   back-end to be used for computations. See
 #'   \code{\link[BiocParallel]{bpparam}} for details.
@@ -177,13 +179,14 @@ imputeZeros <- function(model, x) {
 setMethod("zinbwave", "SummarizedExperiment",
           function(Y, X, V, K=0, fitted_model, which_assay,
                    which_genes,
-                   commondispersion=TRUE, verbose=FALSE,
+                   commondispersion=TRUE,
+                   zeroinflation=TRUE, verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(),
                    normalizedValues = FALSE, residuals = FALSE,
                    imputedValues = FALSE,
-                   observationalWeights = TRUE, ...) {
+                   observationalWeights = zeroinflation, ...) {
 
               if(missing(fitted_model)) {
 
@@ -202,6 +205,7 @@ setMethod("zinbwave", "SummarizedExperiment",
 
                   fitted_model <- zinbFit(YY, X, V, K,
                                           which_assay, commondispersion,
+                                          zeroinflation,
                                           verbose, nb.repeat.initialize,
                                           maxiter.optimize,
                                           stop.epsilon.optimize, BPPARAM,
@@ -239,6 +243,7 @@ setMethod("zinbwave", "SummarizedExperiment",
               if(refit) {
                   fitted_model <- zinbFit(Y, X, V, K = 0,
                                           which_assay, commondispersion,
+                                          zeroinflation,
                                           verbose, nb.repeat.initialize,
                                           maxiter.optimize,
                                           stop.epsilon.optimize, BPPARAM,

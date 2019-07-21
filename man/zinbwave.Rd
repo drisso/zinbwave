@@ -10,11 +10,12 @@ gene and cell-level covariates.}
 zinbwave(Y, ...)
 
 \S4method{zinbwave}{SummarizedExperiment}(Y, X, V, K = 0, fitted_model,
-  which_assay, which_genes, commondispersion = TRUE, verbose = FALSE,
-  nb.repeat.initialize = 2, maxiter.optimize = 25,
-  stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(),
-  normalizedValues = FALSE, residuals = FALSE, imputedValues = FALSE,
-  observationalWeights = TRUE, ...)
+  which_assay, which_genes, commondispersion = TRUE,
+  zeroinflation = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
+  maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
+  BPPARAM = BiocParallel::bpparam(), normalizedValues = FALSE,
+  residuals = FALSE, imputedValues = FALSE,
+  observationalWeights = zeroinflation, ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns). Currently implemented
@@ -47,6 +48,9 @@ Ignored if \code{fitted_model} is provided.}
 
 \item{commondispersion}{Whether or not a single dispersion for all features
 is estimated (default TRUE).}
+
+\item{zeroinflation}{Whether or not a ZINB model should be fitted. If FALSE,
+a negative binomial model is fitted instead.}
 
 \item{verbose}{Print helpful messages.}
 

@@ -16,9 +16,9 @@ zinbFit(Y, ...)
   BPPARAM = BiocParallel::bpparam(), ...)
 
 \S4method{zinbFit}{matrix}(Y, X, V, K, commondispersion = TRUE,
-  verbose = FALSE, nb.repeat.initialize = 2, maxiter.optimize = 25,
-  stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(),
-  ...)
+  zeroinflation = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
+  maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
+  BPPARAM = BiocParallel::bpparam(), ...)
 
 \S4method{zinbFit}{dgCMatrix}(Y, ...)
 }
@@ -60,6 +60,9 @@ when the relative gain in likelihood is below epsilon (default 0.0001).}
 \item{BPPARAM}{object of class \code{bpparamClass} that specifies the
 back-end to be used for computations. See
 \code{\link[BiocParallel]{bpparam}} for details.}
+
+\item{zeroinflation}{Whether or not a ZINB model should be fitted. If FALSE,
+a negative binomial model is fitted instead.}
 }
 \value{
 An object of class \code{ZinbModel} that has been fitted by penalized
