@@ -1,7 +1,7 @@
 ---
 title: "An introduction to ZINB-WaVE"
 author: "Davide Risso"
-date: "Last modified: February 15, 2018; Compiled: `r format(Sys.time(), '%B %d, %Y')`"
+date: "Last modified: April 19, 2019; Compiled: `r format(Sys.time(), '%B %d, %Y')`"
 bibliography: biblio.bib
 output:
   BiocStyle::html_document:
@@ -323,7 +323,9 @@ For UMI data, for which the expected counts may be very low, the likelihood rati
 
 The factors inferred in the `zinbwave` model can be used to find subpopulations using Seurat's cluster analysis method.
 
-Note that the following workflow has only been tested with Seurat's version 2.3.4.
+We first need to convert the `SingleCellExperiment` object into a `Seurat` object, using Seurat's `CreateSeuratObject` function.
+
+Note that the following workflow has been tested with Seurat's version 3.0.0.
 
 Here we create a Seurat object starting from the `SingleCellExperiment` object. 
 Note that the coercion function requires that a slot named `logcounts` is present. This slot should contain the normalized data, hence we rename our `normalizedValues` slot to `logcounts`.
@@ -332,17 +334,49 @@ Please, refer to the Seurat's vignettes for a typical analysis, which includes f
 
 ```{r seurat}
 library(Seurat)
-assayNames(fluidigm_norm)[5] <- "logcounts"
-seu <- as.seurat(fluidigm_norm)
+
+seu <- as.Seurat(x = fluidigm_zinb, counts = "counts", data = "counts")
 ```
 
-The object will include the `zinbwave` factors matrix as one of the dimensionality reduction slots, which we can use for cluster analysis.
+Note that our `zinbwave` factors are automatically in the Seurat object.
 
 ```{r seurat2}
-seu <- FindClusters(object = seu, reduction.type = "zinbwave", 
-                    dims.use = 1:2, #this should match K
-                    resolution = 0.6, print.output = 0, save.SNN = TRUE)
+seu
 ```
+
+Finally, we can use the `zinbwave` factors for cluster analysis.
+
+```{r seurat3}
+seu <- FindNeighbors(seu, reduction = "zinbwave",
+                     dims = 1:2 #this should match K
+                     )
+seu <- FindClusters(object = seu)
+```
+
+# Working with large datasets
+
+When working with large datasets, `zinbwave` can be computationally demanding.
+We provide an approximate strategy, implemented in the `zinbsurf` function, that
+uses only a random subset of the cells to infer the low dimensional space and 
+subsequently projects all the cells into the inferred space.
+
+```{r}
+fluidigm_surf <- zinbsurf(fluidigm, K = 2, epsilon = 1000,
+                          prop_fit = 0.5)
+
+W2 <- reducedDim(fluidigm_surf)
+
+data.frame(W2, bio=colData(fluidigm)$Biological_Condition,
+           coverage=colData(fluidigm)$Coverage_Type) %>%
+    ggplot(aes(W1, W2, colour=bio, shape=coverage)) + geom_point() + 
+    scale_color_brewer(type = "qual", palette = "Set1") + theme_classic()
+```
+
+Note that here we use 50% of the data to get a reasonable approximation, since
+we start with only 130 cells. We found that for datasets with tens of thousands 
+of cells, 10% (the default value) is usally a reasonable choice.
+
+Note that this is an experimental feature and has not been thoroughly tested. Use at your own risk!
 
 # A note on performance and parallel computing
 

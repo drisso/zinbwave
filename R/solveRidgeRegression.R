@@ -37,7 +37,7 @@ solveRidgeRegression <- function(x, y, beta=rep(0,NCOL(x)), epsilon=1e-6, family
     } else if (family == "binomial") {
         function(b) {
             eta <- x %*% b + offset
-            l <- sum(-y*eta + copula::log1pexp(eta))
+            l <- sum(-y*eta + log1pexp(eta))
             l + sum(epsilon*b^2)/2
         }
     }
