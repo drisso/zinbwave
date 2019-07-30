@@ -10,8 +10,8 @@ datasets.}
 zinbsurf(Y, ...)
 
 \S4method{zinbsurf}{SummarizedExperiment}(Y, X, V, K, which_assay,
-  which_genes, prop_fit = 0.1, BPPARAM = BiocParallel::bpparam(),
-  verbose = FALSE, ...)
+  which_genes, zeroinflation = TRUE, prop_fit = 0.1,
+  BPPARAM = BiocParallel::bpparam(), verbose = FALSE, ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns). Currently implemented
@@ -39,6 +39,9 @@ first assay is used.}
 
 \item{which_genes}{character. Which genes to use to estimate W (see details).
 Ignored if \code{fitted_model} is provided.}
+
+\item{zeroinflation}{Whether or not a ZINB model should be fitted. If FALSE,
+a negative binomial model is fitted instead.}
 
 \item{prop_fit}{numeric between 0 and 1. The proportion of cells to use for
 the zinbwave fit.}

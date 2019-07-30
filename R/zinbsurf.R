@@ -12,6 +12,8 @@
 #'   rowData slot of Y.
 #' @param K integer. Number of latent factors. Specify \code{K = 0} if only
 #'   computing observational weights.
+#' @param zeroinflation Whether or not a ZINB model should be fitted. If FALSE,
+#'   a negative binomial model is fitted instead.
 #' @param which_assay numeric or character. Which assay of Y to use. If missing,
 #'   if `assayNames(Y)` contains "counts" then that is used. Otherwise, the
 #'   first assay is used.
@@ -44,7 +46,8 @@
 #' colnames(se) <- paste0("sample", 1:6)
 #' m <- zinbsurf(se, X="~bio", K = 1, prop_fit = .5, which_assay = 1)
 setMethod("zinbsurf", "SummarizedExperiment",
-          function(Y, X, V, K, which_assay, which_genes, prop_fit = .1,
+          function(Y, X, V, K, which_assay, which_genes,
+                   zeroinflation = TRUE, prop_fit = .1,
                    BPPARAM=BiocParallel::bpparam(), verbose = FALSE, ...) {
 
               if(prop_fit <= 0 | prop_fit >=1) {
@@ -110,22 +113,17 @@ setMethod("zinbsurf", "SummarizedExperiment",
                   Xout <- X[out_idx,]
 
                   fit <- zinbFit(Ysub, Xsub, V, K, BPPARAM=BPPARAM,
-                                 verbose = verbose, ...)
+                                 verbose = verbose,
+                                 zeroinflation = zeroinflation, ...)
                   newm <- zinbModel(n=NCOL(Yout), J=NROW(Yout),
                                     X = Xout, V = V, K = K, ...)
               } else {
                   fit <- zinbFit(Ysub, X, V, K, BPPARAM=BPPARAM,
-                                 verbose = verbose, ...)
+                                 verbose = verbose,
+                                 zeroinflation = zeroinflation, ...)
                   newm <- zinbModel(n=NCOL(Yout), J=NROW(Yout),
                                     X = X, V = V, K = K, ...)
               }
-
-              epsilonleft <- c(getEpsilon_gamma_mu(fit),
-                               getEpsilon_gamma_pi(fit), getEpsilon_W(fit))
-
-              nleft <- c(length(getEpsilon_gamma_mu(fit)),
-                         length(getEpsilon_gamma_pi(fit)),
-                         length(getEpsilon_W(fit)))
 
               if(missing(which_assay)) {
                   if("counts" %in% assayNames(Yout)) {
@@ -151,15 +149,45 @@ setMethod("zinbsurf", "SummarizedExperiment",
                           " cells.")
               }
 
-              newfit <- matrix(unlist(
-                  bplapply(seq_along(out_idx), function(i) {
-                      optimleft_fun(getGamma_mu(newm)[,i], getGamma_pi(newm)[,i],
-                                    t(getW(newm)[i,]), dataY[,i], getV_mu(fit),
-                                    getAlpha_mu(fit), getX_mu(newm)[i,],
-                                    getBeta_mu(fit), newm@O_mu[i,], getV_pi(fit),
-                                    getAlpha_pi(fit), getX_pi(newm)[i,], getBeta_pi(fit),
-                                    newm@O_pi[i,], getZeta(fit), epsilonleft)
-                  }, BPPARAM = BPPARAM)), nrow=sum(nleft))
+              if(zeroinflation) {
+                  epsilonleft <- c(getEpsilon_gamma_mu(fit),
+                                   getEpsilon_gamma_pi(fit), getEpsilon_W(fit))
+
+                  nleft <- c(length(getEpsilon_gamma_mu(fit)),
+                             length(getEpsilon_gamma_pi(fit)),
+                             length(getEpsilon_W(fit)))
+
+                  newfit <- matrix(unlist(
+                      bplapply(seq_along(out_idx), function(i) {
+                          optimleft_fun(getGamma_mu(newm)[,i],
+                                        getGamma_pi(newm)[,i],
+                                        t(getW(newm)[i,]), dataY[,i],
+                                        getV_mu(fit),
+                                        getAlpha_mu(fit), getX_mu(newm)[i,],
+                                        getBeta_mu(fit), newm@O_mu[i,],
+                                        getV_pi(fit),
+                                        getAlpha_pi(fit), getX_pi(newm)[i,],
+                                        getBeta_pi(fit),
+                                        newm@O_pi[i,], getZeta(fit), epsilonleft)
+                      }, BPPARAM = BPPARAM)), nrow=sum(nleft))
+              } else {
+                  epsilonleft <- c(getEpsilon_gamma_mu(fit),
+                                   getEpsilon_W(fit))
+
+                  nleft <- c(length(getEpsilon_gamma_mu(fit)),
+                             length(getEpsilon_W(fit)))
+
+                  newfit <- matrix(unlist(
+                      bplapply(seq_along(out_idx), function(i) {
+                          optimleft_fun_nb(getGamma_mu(newm)[,i],
+                                        t(getW(newm)[i,]), dataY[,i],
+                                        getV_mu(fit),
+                                        getAlpha_mu(fit), getX_mu(newm)[i,],
+                                        getBeta_mu(fit), newm@O_mu[i,],
+                                        getZeta(fit), epsilonleft)
+                      }, BPPARAM = BPPARAM)), nrow=sum(nleft))
+
+              }
 
               newW <- t(newfit[-(seq_len(sum(nleft[1:2]))), ,drop = FALSE])
               W <- rbind(getW(fit), newW)
