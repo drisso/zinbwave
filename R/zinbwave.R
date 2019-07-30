@@ -186,7 +186,7 @@ setMethod("zinbwave", "SummarizedExperiment",
                    BPPARAM=BiocParallel::bpparam(),
                    normalizedValues = FALSE, residuals = FALSE,
                    imputedValues = FALSE,
-                   observationalWeights = zeroinflation, ...) {
+                   observationalWeights = FALSE, ...) {
 
               if(missing(fitted_model)) {
 

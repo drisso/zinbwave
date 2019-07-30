@@ -15,7 +15,7 @@ zinbwave(Y, ...)
   maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
   BPPARAM = BiocParallel::bpparam(), normalizedValues = FALSE,
   residuals = FALSE, imputedValues = FALSE,
-  observationalWeights = zeroinflation, ...)
+  observationalWeights = FALSE, ...)
 }
 \arguments{
 \item{Y}{The data (genes in rows, samples in columns). Currently implemented
