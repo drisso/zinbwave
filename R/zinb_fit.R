@@ -14,7 +14,8 @@
 #' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)))
 setMethod("zinbFit", "SummarizedExperiment",
           function(Y, X, V, K, which_assay,
-                   commondispersion=TRUE, verbose=FALSE,
+                   commondispersion=TRUE, zeroinflation = TRUE,
+                   verbose=FALSE,
                    nb.repeat.initialize=2, maxiter.optimize=25,
                    stop.epsilon.optimize=.0001,
                    BPPARAM=BiocParallel::bpparam(), ...) {
@@ -58,7 +59,7 @@ setMethod("zinbFit", "SummarizedExperiment",
               }
 
               # Apply zinbFit on the assay of SummarizedExperiment
-              res <- zinbFit(dataY, X, V, K, commondispersion,
+              res <- zinbFit(dataY, X, V, K, commondispersion, zeroinflation,
                              verbose, nb.repeat.initialize, maxiter.optimize,
                              stop.epsilon.optimize, BPPARAM, ...)
 

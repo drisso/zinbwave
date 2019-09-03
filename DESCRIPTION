@@ -11,7 +11,7 @@ Authors@R:
           email="fperraudeau@berkeley.edu"),
       person("Jean-Philippe", "Vert", role="aut", 
           email="jean-philippe.vert@mines-paristech.fr"),
-      person("Clara", "Bagatin", role="cbt"))
+      person("Clara", "Bagatin", role="ctb"))
 Description: 
    Implements a general and flexible zero-inflated negative binomial model that
    can be used to provide a low-dimensional representations of single-cell
