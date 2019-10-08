@@ -261,8 +261,11 @@ As with `zinbwave`, by default, the `zinbFit` function fits a ZINB model with $X
 
 If a user has run `zinbFit` and wants to obtain normalized values or the low-dimensional representation of the data in a `SingleCellExperiment` format, they can pass the `zinbModel` object to `zinbwave` to avoid repeating all the computations.
 
+Here, we also specify `observationalWeights = TRUE` to compute observational weights, useful for differential expression (see next section).
+
 ```{r zinbwave2}
-fluidigm_zinb <- zinbwave(fluidigm, fitted_model = zinb, K = 2, epsilon=1000)
+fluidigm_zinb <- zinbwave(fluidigm, fitted_model = zinb, K = 2, epsilon=1000,
+                          observationalWeights = TRUE)
 ```
 
 # Differential Expression

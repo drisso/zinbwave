@@ -1,3 +1,12 @@
+Changes in Version 1.7.5 (2019-10-08)
+=====================================
+
+* Changed default of `zinbwave` to `observationalWeights=FALSE` to speed up
+  computations when weights are not needed.
+* Added argument `zeroinflation = TRUE`: when set to FALSE a negative binomial
+  model is fit.
+* Removed dependence on the `copula` package to avoid depending on `gsl`.
+
 Changes in Version 1.5.3 (2019-04-19)
 =====================================
 

@@ -11,9 +11,10 @@
 zinbFit(Y, ...)
 
 \S4method{zinbFit}{SummarizedExperiment}(Y, X, V, K, which_assay,
-  commondispersion = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
-  maxiter.optimize = 25, stop.epsilon.optimize = 1e-04,
-  BPPARAM = BiocParallel::bpparam(), ...)
+  commondispersion = TRUE, zeroinflation = TRUE, verbose = FALSE,
+  nb.repeat.initialize = 2, maxiter.optimize = 25,
+  stop.epsilon.optimize = 1e-04, BPPARAM = BiocParallel::bpparam(),
+  ...)
 
 \S4method{zinbFit}{matrix}(Y, X, V, K, commondispersion = TRUE,
   zeroinflation = TRUE, verbose = FALSE, nb.repeat.initialize = 2,
@@ -46,6 +47,9 @@ is a SummarizedExperiment).}
 \item{commondispersion}{Whether or not a single dispersion for all features
 is estimated (default TRUE).}
 
+\item{zeroinflation}{Whether or not a ZINB model should be fitted. If FALSE,
+a negative binomial model is fitted instead.}
+
 \item{verbose}{Print helpful messages.}
 
 \item{nb.repeat.initialize}{Number of iterations for the initialization of
@@ -60,9 +64,6 @@ when the relative gain in likelihood is below epsilon (default 0.0001).}
 \item{BPPARAM}{object of class \code{bpparamClass} that specifies the
 back-end to be used for computations. See
 \code{\link[BiocParallel]{bpparam}} for details.}
-
-\item{zeroinflation}{Whether or not a ZINB model should be fitted. If FALSE,
-a negative binomial model is fitted instead.}
 }
 \value{
 An object of class \code{ZinbModel} that has been fitted by penalized
