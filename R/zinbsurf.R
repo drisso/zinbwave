@@ -77,8 +77,8 @@ setMethod("zinbsurf", "SummarizedExperiment",
               sample_idx <- sample(seq_len(NCOL(Y)), size = floor(NCOL(Y) * prop_fit))
               out_idx <- setdiff(seq_len(NCOL(Y)), sample_idx)
 
-              Ysub <- Y[,sample_idx]
-              Yout <- Y[,out_idx]
+              Ysub <- Y[,sample_idx,drop=FALSE]
+              Yout <- Y[,out_idx,drop=FALSE]
 
               if(verbose) {
                   message("Fitting zinbwave model using ", length(sample_idx),
@@ -109,8 +109,8 @@ setMethod("zinbsurf", "SummarizedExperiment",
                       })
                   }
 
-                  Xsub <- X[sample_idx,]
-                  Xout <- X[out_idx,]
+                  Xsub <- X[sample_idx,,drop=FALSE]
+                  Xout <- X[out_idx,,drop=FALSE]
 
                   fit <- zinbFit(Ysub, Xsub, V, K, BPPARAM=BPPARAM,
                                  verbose = verbose,
