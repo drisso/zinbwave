@@ -251,6 +251,7 @@ zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
             gamma_mu <- matrix(unlist(bplapply(seq(n), function(i) {
                 solveRidgeRegression(x=getV_mu(m)[P[i,], , drop=FALSE],
                                      y=L[i,P[i,]] - Xbeta_mu[i, P[i,]],
+                                     beta = gamma_mu[,i],
                                      epsilon = getEpsilon_gamma_mu(m),
                                      family="gaussian")
                 } , BPPARAM=BPPARAM
@@ -265,6 +266,7 @@ zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
             beta_mu <- matrix(unlist(bplapply(seq(J), function(j) {
                 solveRidgeRegression(x=getX_mu(m)[P[,j], , drop=FALSE],
                                      y=L[P[,j],j] - tVgamma_mu[P[,j], j],
+                                     beta = beta_mu[,i],
                                      epsilon = getEpsilon_beta_mu(m),
                                      family="gaussian")
             }, BPPARAM=BPPARAM
@@ -320,6 +322,7 @@ zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
                 solveRidgeRegression(x=getV_pi(m),
                                      y=Z[i,],
                                      offset=off[i,],
+                                     beta = gamma_pi[,i],
                                      epsilon = getEpsilon_gamma_pi(m),
                                      family="binomial")
             }, BPPARAM=BPPARAM
