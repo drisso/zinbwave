@@ -266,7 +266,7 @@ zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
             beta_mu <- matrix(unlist(bplapply(seq(J), function(j) {
                 solveRidgeRegression(x=getX_mu(m)[P[,j], , drop=FALSE],
                                      y=L[P[,j],j] - tVgamma_mu[P[,j], j],
-                                     beta = beta_mu[,i],
+                                     beta = beta_mu[,j],
                                      epsilon = getEpsilon_beta_mu(m),
                                      family="gaussian")
             }, BPPARAM=BPPARAM
