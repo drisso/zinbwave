@@ -72,7 +72,7 @@ nbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
              sum(getEpsilon_W(m)*t(W)^2)/2 +
              getEpsilon_zeta(m)*var(zeta)/2
       message("After dispersion optimization = ",
-              nb.loglik(Y, mu, exp(zeta)) - pen)
+              nb.loglik(Y, mu, rep(exp(zeta), rep(n, J))) - pen)
     }
 
     # 2. Optimize right factors
@@ -109,7 +109,7 @@ nbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
              sum(getEpsilon_W(m)*t(W)^2)/2 +
              getEpsilon_zeta(m)*var(zeta)/2
       message("After right optimization = ",
-              nb.loglik(Y, itermu, exp(zeta)) - pen)
+              nb.loglik(Y, itermu, rep(exp(zeta), rep(n, J))) - pen)
     }
 
     # 3. Orthogonalize
@@ -131,7 +131,7 @@ nbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
              getEpsilon_zeta(m)*var(zeta)/2
 
       message("After orthogonalization = ",
-              nb.loglik(Y, itermu, exp(zeta)) - pen)
+              nb.loglik(Y, itermu, rep(exp(zeta), rep(n, J))) - pen)
     }
 
     # 4. Optimize left factors
@@ -168,7 +168,7 @@ nbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
              getEpsilon_zeta(m)*var(zeta)/2
 
       message("After left optimization = ",
-              nb.loglik(Y, itermu, exp(zeta)) - pen)
+              nb.loglik(Y, itermu, rep(exp(zeta), rep(n, J))) - pen)
     }
 
     # 5. Orthogonalize
@@ -191,7 +191,7 @@ nbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
              getEpsilon_zeta(m)*var(zeta)/2
 
       message("After orthogonalization = ",
-              nb.loglik(Y, itermu, exp(zeta)) - pen)
+              nb.loglik(Y, itermu, rep(exp(zeta), rep(n, J))) - pen)
     }
 
   }
