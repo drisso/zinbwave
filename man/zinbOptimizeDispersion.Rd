@@ -4,8 +4,15 @@
 \alias{zinbOptimizeDispersion}
 \title{Optimize the dispersion parameters of a ZINB regression model}
 \usage{
-zinbOptimizeDispersion(J, mu, logitPi, epsilon, Y,
-  commondispersion = TRUE, BPPARAM = BiocParallel::bpparam())
+zinbOptimizeDispersion(
+  J,
+  mu,
+  logitPi,
+  epsilon,
+  Y,
+  commondispersion = TRUE,
+  BPPARAM = BiocParallel::bpparam()
+)
 }
 \arguments{
 \item{J}{The number of genes.}

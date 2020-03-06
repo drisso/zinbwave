@@ -4,8 +4,14 @@
 \alias{pvalueAdjustment}
 \title{Perform independent filtering in differential expression analysis.}
 \usage{
-pvalueAdjustment(baseMean, filter, pValue, theta, alpha = 0.05,
-  pAdjustMethod = "BH")
+pvalueAdjustment(
+  baseMean,
+  filter,
+  pValue,
+  theta,
+  alpha = 0.05,
+  pAdjustMethod = "BH"
+)
 }
 \arguments{
 \item{baseMean}{A vector of mean values.}

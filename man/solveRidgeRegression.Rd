@@ -4,8 +4,14 @@
 \alias{solveRidgeRegression}
 \title{Solve ridge regression or logistic regression problems}
 \usage{
-solveRidgeRegression(x, y, beta = rep(0, NCOL(x)), epsilon = 1e-06,
-  family = c("gaussian", "binomial"), offset = rep(0, NROW(x)))
+solveRidgeRegression(
+  x,
+  y,
+  beta = rep(0, NCOL(x)),
+  epsilon = 1e-06,
+  family = c("gaussian", "binomial"),
+  offset = rep(0, NROW(x))
+)
 }
 \arguments{
 \item{x}{a matrix of covariates, one sample per row, one covariate per

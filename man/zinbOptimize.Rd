@@ -4,9 +4,15 @@
 \alias{zinbOptimize}
 \title{Optimize the parameters of a ZINB regression model}
 \usage{
-zinbOptimize(m, Y, commondispersion = TRUE, maxiter = 25,
-  stop.epsilon = 1e-04, verbose = FALSE,
-  BPPARAM = BiocParallel::bpparam())
+zinbOptimize(
+  m,
+  Y,
+  commondispersion = TRUE,
+  maxiter = 25,
+  stop.epsilon = 1e-04,
+  verbose = FALSE,
+  BPPARAM = BiocParallel::bpparam()
+)
 }
 \arguments{
 \item{m}{The model of class ZinbModel}

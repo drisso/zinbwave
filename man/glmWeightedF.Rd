@@ -5,8 +5,14 @@
 \title{Zero-inflation adjusted statistical tests for assessing
 differential expression.}
 \usage{
-glmWeightedF(glmfit, coef = ncol(glmfit$design), contrast = NULL,
-  ZI = TRUE, independentFiltering = TRUE, filter = NULL)
+glmWeightedF(
+  glmfit,
+  coef = ncol(glmfit$design),
+  contrast = NULL,
+  ZI = TRUE,
+  independentFiltering = TRUE,
+  filter = NULL
+)
 }
 \arguments{
 \item{glmfit}{a \code{\link[edgeR]{DGEGLM-class}} object,

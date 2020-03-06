@@ -4,8 +4,13 @@
 \alias{zinbInitialize}
 \title{Initialize the parameters of a ZINB regression model}
 \usage{
-zinbInitialize(m, Y, nb.repeat = 2, it.max = 100,
-  BPPARAM = BiocParallel::bpparam())
+zinbInitialize(
+  m,
+  Y,
+  nb.repeat = 2,
+  it.max = 100,
+  BPPARAM = BiocParallel::bpparam()
+)
 }
 \arguments{
 \item{m}{The model of class ZinbModel}

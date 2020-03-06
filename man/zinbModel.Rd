@@ -4,11 +4,36 @@
 \alias{zinbModel}
 \title{Initialize an object of class ZinbModel}
 \usage{
-zinbModel(X, V, O_mu, O_pi, which_X_mu, which_X_pi, which_V_mu, which_V_pi,
-  W, beta_mu, beta_pi, gamma_mu, gamma_pi, alpha_mu, alpha_pi, zeta,
-  epsilon, epsilon_beta_mu, epsilon_gamma_mu, epsilon_beta_pi,
-  epsilon_gamma_pi, epsilon_W, epsilon_alpha, epsilon_zeta,
-  epsilon_min_logit, n, J, K)
+zinbModel(
+  X,
+  V,
+  O_mu,
+  O_pi,
+  which_X_mu,
+  which_X_pi,
+  which_V_mu,
+  which_V_pi,
+  W,
+  beta_mu,
+  beta_pi,
+  gamma_mu,
+  gamma_pi,
+  alpha_mu,
+  alpha_pi,
+  zeta,
+  epsilon,
+  epsilon_beta_mu,
+  epsilon_gamma_mu,
+  epsilon_beta_pi,
+  epsilon_gamma_pi,
+  epsilon_W,
+  epsilon_alpha,
+  epsilon_zeta,
+  epsilon_min_logit,
+  n,
+  J,
+  K
+)
 }
 \arguments{
 \item{X}{matrix. The design matrix containing sample-level covariates, one
