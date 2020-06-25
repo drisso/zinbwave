@@ -3,8 +3,10 @@
 \name{toydata}
 \alias{toydata}
 \title{Toy dataset to check the model}
-\format{A matrix of integers (counts) with 96 samples (rows) and 500 genes
-  (columns).}
+\format{
+A matrix of integers (counts) with 96 samples (rows) and 500 genes
+  (columns).
+}
 \description{
 Toy dataset to check the model
 }

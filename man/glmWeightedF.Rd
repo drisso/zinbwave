@@ -2,8 +2,8 @@
 % Please edit documentation in R/detest.R
 \name{glmWeightedF}
 \alias{glmWeightedF}
-\title{Zero-inflation adjusted statistical tests for assessing
-differential expression.}
+\title{Zero-inflation adjusted statistical tests for assessing differential
+expression.}
 \usage{
 glmWeightedF(
   glmfit,
@@ -15,44 +15,59 @@ glmWeightedF(
 )
 }
 \arguments{
-\item{glmfit}{a \code{\link[edgeR]{DGEGLM-class}} object,
-usually output from \code{\link[edgeR]{glmFit}}.}
+\item{glmfit}{a \code{\link[edgeR]{DGEGLM-class}} object, usually output from
+\code{\link[edgeR]{glmFit}}.}
 
-\item{coef}{integer or character vector indicating which
-coefficients of the linear model are to be tested equal to zero.
-Values must be columns or column names of design. Defaults to the
-last coefficient. Ignored if \code{contrast} is specified.}
+\item{coef}{integer or character vector indicating which coefficients of the
+linear model are to be tested equal to zero. Values must be columns or
+column names of design. Defaults to the last coefficient. Ignored if
+\code{contrast} is specified.}
 
-\item{contrast}{numeric vector or matrix specifying one or more
-contrasts of the linear model coefficients to be tested equal to zero. Number of rows must equal to the number of columns of \code{design}. If specified, then takes precedence over \code{coef}.}
+\item{contrast}{numeric vector or matrix specifying one or more contrasts of
+the linear model coefficients to be tested equal to zero. Number of rows
+must equal to the number of columns of \code{design}. If specified, then
+takes precedence over \code{coef}.}
 
 \item{ZI}{logical, specifying whether the degrees of freedom in the
 statistical test should be adjusted according to the weights in the
-\code{fit} object to account for the downweighting. Defaults to TRUE and this option is highly recommended.}
+\code{fit} object to account for the downweighting. Defaults to TRUE and
+this option is highly recommended.}
 
-\item{independentFiltering}{logical, specifying whether independent
-filtering should be performed.}
+\item{independentFiltering}{logical, specifying whether independent filtering
+should be performed.}
 
-\item{filter}{vector of values to perform filtering on. Default is
-the mean of the fitted values from glmfit.}
+\item{filter}{vector of values to perform filtering on. Default is the mean
+of the fitted values from glmfit.}
 }
 \description{
-This function recycles an old version of the
-\code{\link[edgeR]{glmLRT}} method that allows an F-test with
-adjusted denominator degrees of freedom to account for the
-downweighting in the zero-inflation model.
+This function recycles an old version of the \code{\link[edgeR]{glmLRT}}
+method that allows an F-test with adjusted denominator degrees of freedom to
+account for the downweighting in the zero-inflation model.
+}
+\details{
+When `independentFiltering=TRUE` (default) an independent filtering
+step is applied prior to the multiple testing procedure, as described in
+great details in the `DESeq2`` vignette.
+The values in the `padjFilter` column refer to this procedure. They are
+identical to the `FDR` values if the filtering step does not remove any gene,
+since the function uses the Benjamini-Hochberg correction by default. If the
+procedure filters some genes, the adjusted p-values will typically result in
+greater power to detect DE genes. The theory behind independent filtering is
+described in  Bourgon et al. (2010).
 }
 \note{
-This function uses an adapted version of the \code{glmLRT}
-function that was originally written by Gordon Smyth, Davis
-McCarthy and Yunshun Chen as part of the edgeR package.
-Koen Van den Berge wrote code to adjust residual degree
-of freedoom and added the independent filtering step.
+This function uses an adapted version of the \code{glmLRT} function
+  that was originally written by Gordon Smyth, Davis McCarthy and Yunshun
+  Chen as part of the edgeR package. Koen Van den Berge wrote code to adjust
+  residual degree of freedoom and added the independent filtering step.
 }
 \references{
 McCarthy, DJ, Chen, Y, Smyth, GK (2012). Differential expression
-analysis of multifactor RNA-Seq experiments with respect to
-biological variation. Nucleic Acids Research 40, 4288-4297.
+analysis of multifactor RNA-Seq experiments with respect to biological
+variation. Nucleic Acids Research 40, 4288-4297.
+Bourgon, Richard, Robert Gentleman, and Wolfgang Huber (2010) Independent
+Filtering Increases Detection Power for High-Throughput Experiments. PNAS
+107 (21): 9546-51.
 }
 \seealso{
 \code{\link[edgeR]{glmLRT}}
