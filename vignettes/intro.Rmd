@@ -272,7 +272,7 @@ fluidigm_zinb <- zinbwave(fluidigm, fitted_model = zinb, K = 2, epsilon=1000,
 
 The `zinbwave` package can be used to compute observational weights to "unlock" bulk RNA-seq tools for single-cell applications, as illustrated in [@van2018observation].
 
-Since version `1.1.5`, `zinbwave` computes the observational weights by default. See the man page of `zinbwave`.
+`zinbwave` optionally computes the observational weights when specifying `observationalWeights = TRUE` as in the code chuck above. See the man page of `zinbwave`.
 The weights are stored in an `assay` named `weights` and can be accessed with the following call.
 
 ```{r weights}
