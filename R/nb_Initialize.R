@@ -43,6 +43,7 @@ nbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
         solveRidgeRegression(x=getV_mu(m),
                              y=L[i,] - Xbeta_mu[i,],
                              epsilon = getEpsilon_gamma_mu(m),
+                             beta = gamma_mu[,i],
                              family="gaussian")
       } , BPPARAM=BPPARAM
       )), nrow=NCOL(getV_mu(m)))
@@ -57,6 +58,7 @@ nbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
         solveRidgeRegression(x=getX_mu(m),
                              y=L[,j] - tVgamma_mu[, j],
                              epsilon = getEpsilon_beta_mu(m),
+                             beta = beta_mu[,j],
                              family="gaussian")
       }, BPPARAM=BPPARAM
       )), nrow=NCOL(getX_mu(m)))
