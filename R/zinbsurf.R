@@ -175,6 +175,7 @@ setMethod("zinbsurf", "SummarizedExperiment",
                                    getEpsilon_W(fit))
 
                   nleft <- c(length(getEpsilon_gamma_mu(fit)),
+                             0,
                              length(getEpsilon_W(fit)))
 
                   newfit <- matrix(unlist(
