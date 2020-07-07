@@ -1,8 +1,9 @@
-Changes in Version 1.11.3 (2020-07-06)
+Changes in Version 1.11.4 (2020-07-06)
 =====================================
 
 * Fixed a bug in the initialization of beta_j.
 * Fixed a bug in zinbsurf.
+* Changed zinbwave default to `K=2`.
 
 Changes in Version 1.7.5 (2019-10-08)
 =====================================
