@@ -177,7 +177,7 @@ imputeZeros <- function(model, x) {
 #'
 #' m <- zinbwave(se, X="~bio")
 setMethod("zinbwave", "SummarizedExperiment",
-          function(Y, X, V, K=0, fitted_model, which_assay,
+          function(Y, X, V, K=2, fitted_model, which_assay,
                    which_genes,
                    commondispersion=TRUE,
                    zeroinflation=TRUE, verbose=FALSE,

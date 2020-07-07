@@ -12,7 +12,7 @@ zinbwave(Y, ...)
   Y,
   X,
   V,
-  K = 0,
+  K = 2,
   fitted_model,
   which_assay,
   which_genes,

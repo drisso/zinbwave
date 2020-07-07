@@ -7,7 +7,7 @@ test_that("zinbwave gives same result with / without model fit", {
     se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                                 colData = data.frame(bio = gl(2, 3)))
 
-    expect_warning(m1 <- zinbwave(se, X="~bio"), "No assay named `counts`")
+    expect_warning(m1 <- zinbwave(se, X="~bio", K=0), "No assay named `counts`")
 
     fit <- zinbFit(se, X="~bio")
     expect_warning(m2 <- zinbwave(se, fitted_model=fit), "No assay named `counts`")
