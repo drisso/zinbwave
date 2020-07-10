@@ -32,12 +32,12 @@ Imports:
    stats,
    genefilter,
    edgeR,
-   Matrix
+   Matrix,
+   matrixStats
 Suggests: 
     knitr,
     rmarkdown,
     testthat,
-    matrixStats,
     magrittr,
     scRNAseq,
     ggplot2,

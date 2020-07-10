@@ -204,6 +204,7 @@ setMethod("zinbFit", "dgCMatrix",
 #' m <- zinbInitialize(m, Y)
 #' @export
 #' @importFrom softImpute softImpute
+#' @importFrom matrixStats rowVars
 zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
                            BPPARAM=BiocParallel::bpparam()) {
 
@@ -357,8 +358,10 @@ zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
         iter <- iter+1
     }
 
-    ## 7. Initialize dispersion to 1
-    zeta <- rep(0, J)
+    ## 7. Initialize dispersion
+    zeta <- log(pmax(1,
+                  pmin(1e3,
+                    colMeans(Y)^2/abs(colVars(Y) - colMeans(Y)))))
 
     out <- zinbModel(X = m@X, V = m@V, O_mu = m@O_mu, O_pi = m@O_pi,
                      which_X_mu = m@which_X_mu, which_X_pi = m@which_X_pi,

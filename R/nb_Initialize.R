@@ -89,8 +89,10 @@ nbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
   }
 
 
-  ## 5. Initialize dispersion to 1
-  zeta <- rep(0, J)
+  ## 5. Initialize dispersion
+  zeta <- log(pmax(1,
+                pmin(1e3,
+                    colMeans(Y)^2/abs(colVars(Y) - colMeans(Y)))))
 
   out <-  zinbModel(X = m@X, V = m@V, O_mu = m@O_mu,
                    which_X_mu = m@which_X_mu,
