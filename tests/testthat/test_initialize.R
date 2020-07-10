@@ -28,9 +28,9 @@ test_that("W can be estimated from random matrix (no signal)", {
     SE <- SummarizedExperiment(assays = list(counts=my_data$counts),
                               rowDat = data.frame(V),
                               colDat = data.frame(X))
-    sf = zinbFit(SE,
+    expect_warning(sf <- zinbFit(SE,
                  V = "~V - 1",
-                 K = 2)
+                 K = 2))
 
     round(cor(cbind(W, sf@W)), 2)
 })

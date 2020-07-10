@@ -101,3 +101,55 @@ test_that("zinbsurf works with subset of genes", {
 
     expect_equal(m1, m2)
 })
+
+test_that("zinbsurf fails when it needs to", {
+    cc <- matrix(rpois(300, lambda=5), nrow=10, ncol=30)
+    wh_genes <- c(rep(TRUE, 2), rep(FALSE, 8))
+
+    se <- SummarizedExperiment(assays = list(counts = cc),
+                               colData = data.frame(bio = gl(2, 15)),
+                               rowData = data.frame(wh_genes = wh_genes))
+    assay(se, "logcounts") <- log(assay(se))
+
+    set.seed(123)
+    expect_error(zinbsurf(se, K=1, prop_fit = .5), "colnames")
+
+    rownames(se) <- paste0("gene", 1:10)
+    colnames(se) <- paste0("cell", 1:30)
+    expect_error(zinbsurf(se, K=0, prop_fit = .5), "K > 0")
+    expect_error(zinbsurf(se, prop_fit = .5), "missing")
+    expect_error(zinbsurf(se, prop_fit = .5,
+                          K=1, which_genes=1), "which_genes")
+    expect_error(zinbsurf(se, prop_fit = .5,
+                          K=1, X="~bio2"), "variables in colData")
+    expect_error(zinbsurf(se, prop_fit = .5,
+                          K=1, V="~bio2"), "variables in rowData")
+    expect_error(zinbsurf(se, prop_fit = .5,
+                          K=1, which_assay = "logcounts"))
+
+})
+
+test_that("zinbsurf works with covariates", {
+
+    cc <- matrix(rpois(300, lambda=5), nrow=10, ncol=30)
+    rownames(cc) <- paste0("gene", 1:10)
+    colnames(cc) <- paste0("cell", 1:30)
+
+    cov <- rnorm(10)
+
+    se <- SummarizedExperiment(assays = list(counts = cc),
+                               colData = data.frame(bio = gl(2, 15)),
+                               rowData = data.frame(cov = cov))
+
+    expect_silent(m1 <- zinbsurf(se, K=1, prop_fit = .5,
+                                 X = "~bio"))
+
+    expect_silent(m1 <- zinbsurf(se, K=1, prop_fit = .5,
+                                 V = "~cov"))
+
+    expect_silent(m1 <- zinbsurf(se, K=1, prop_fit = .5,
+                                 V = "~cov", X = "~bio"))
+
+    expect_silent(m1 <- zinbsurf(se, K=1, prop_fit = .5,
+                                 zeroinflation = FALSE))
+})
