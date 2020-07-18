@@ -288,7 +288,7 @@ zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
                 lambda=lambda,
                 rank.max=nFactors(m), maxit=it.max)
 
-        while(length(R$d) < nFactors(m)) {
+        while(length(R$d) < nFactors(m) | any(R$d == 0)) {
             lambda <- lambda/2
             R <- softImpute::softImpute(D,
                         lambda=lambda,
