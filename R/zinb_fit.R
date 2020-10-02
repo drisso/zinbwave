@@ -11,7 +11,8 @@
 #' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
 #'                            colData = data.frame(bio = gl(2, 3)))
 #'
-#' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)))
+#' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+#'              BPPARAM=BiocParallel::SerialParam())
 setMethod("zinbFit", "SummarizedExperiment",
           function(Y, X, V, K, which_assay,
                    commondispersion=TRUE, zeroinflation = TRUE,
@@ -112,7 +113,7 @@ setMethod("zinbFit", "SummarizedExperiment",
 #' @examples
 #' bio <- gl(2, 3)
 #' m <- zinbFit(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
-#'              X=model.matrix(~bio))
+#'              X=model.matrix(~bio), BPPARAM=BiocParallel::SerialParam())
 setMethod("zinbFit", "matrix",
           function(Y, X, V, K, commondispersion=TRUE,
                    zeroinflation = TRUE, verbose=FALSE,
@@ -201,7 +202,7 @@ setMethod("zinbFit", "dgCMatrix",
 #' gc <- rnorm(10)
 #' m <- zinbModel(Y, X=model.matrix(~bio + time), V=model.matrix(~gc),
 #'              which_X_pi=1L, which_V_mu=1L, K=1)
-#' m <- zinbInitialize(m, Y)
+#' m <- zinbInitialize(m, Y, BPPARAM=BiocParallel::SerialParam())
 #' @export
 #' @importFrom softImpute softImpute
 zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
@@ -398,8 +399,8 @@ zinbInitialize <- function(m, Y, nb.repeat=2,  it.max = 100,
 #' @examples
 #' Y = matrix(10, 3, 5)
 #' m = zinbModel(n=NROW(Y), J=NCOL(Y))
-#' m = zinbInitialize(m, Y)
-#' m = zinbOptimize(m, Y)
+#' m = zinbInitialize(m, Y, BPPARAM=BiocParallel::SerialParam())
+#' m = zinbOptimize(m, Y, BPPARAM=BiocParallel::SerialParam())
 #' @export
 zinbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
                          stop.epsilon=.0001, verbose=FALSE,
@@ -691,8 +692,9 @@ zinbOptimize <- function(m, Y, commondispersion=TRUE, maxiter=25,
 #' @examples
 #' Y = matrix(10, 3, 5)
 #' m = zinbModel(n=NROW(Y), J=NCOL(Y))
-#' m = zinbInitialize(m, Y)
-#' m = zinbOptimizeDispersion(NROW(Y), getMu(m), getLogitPi(m), getEpsilon_zeta(m), Y)
+#' m = zinbInitialize(m, Y, BPPARAM=BiocParallel::SerialParam())
+#' m = zinbOptimizeDispersion(NROW(Y), getMu(m), getLogitPi(m),
+#'      getEpsilon_zeta(m), Y, BPPARAM=BiocParallel::SerialParam())
 #' @export
 zinbOptimizeDispersion <- function(J, mu, logitPi, epsilon,
                                    Y, commondispersion=TRUE,

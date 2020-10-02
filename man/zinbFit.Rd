@@ -121,10 +121,11 @@ Currently, if Y is a sparseMatrix, this calls the zinbFit method on
 se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                            colData = data.frame(bio = gl(2, 3)))
 
-m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)))
+m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+             BPPARAM=BiocParallel::SerialParam())
 bio <- gl(2, 3)
 m <- zinbFit(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
-             X=model.matrix(~bio))
+             X=model.matrix(~bio), BPPARAM=BiocParallel::SerialParam())
 }
 \seealso{
 \code{\link[stats]{model.matrix}}.

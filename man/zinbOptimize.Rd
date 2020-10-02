@@ -48,6 +48,6 @@ converge to a local minimum.
 \examples{
 Y = matrix(10, 3, 5)
 m = zinbModel(n=NROW(Y), J=NCOL(Y))
-m = zinbInitialize(m, Y)
-m = zinbOptimize(m, Y)
+m = zinbInitialize(m, Y, BPPARAM=BiocParallel::SerialParam())
+m = zinbOptimize(m, Y, BPPARAM=BiocParallel::SerialParam())
 }
