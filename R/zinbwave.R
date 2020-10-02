@@ -172,10 +172,11 @@ imputeZeros <- function(model, x) {
 #' @import SingleCellExperiment
 #'
 #' @examples
-#' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+#' se <- SingleCellExperiment(assays = list(counts = matrix(rpois(60, lambda=5),
+#'                                                          nrow=10, ncol=6)),
 #'                            colData = data.frame(bio = gl(2, 3)))
 #'
-#' m <- zinbwave(se, X="~bio")
+#' m <- zinbwave(se, X="~bio", BPPARAM=BiocParallel::SerialParam())
 setMethod("zinbwave", "SummarizedExperiment",
           function(Y, X, V, K=2, fitted_model, which_assay,
                    which_genes,

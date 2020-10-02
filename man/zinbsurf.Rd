@@ -92,8 +92,10 @@ By default \code{zinbsurf} uses all genes to estimate \code{W}.
 }}
 
 \examples{
-se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+se <- SingleCellExperiment(assays = list(counts = matrix(rpois(60, lambda=5),
+                                                         nrow=10, ncol=6)),
                            colData = data.frame(bio = gl(2, 3)))
 colnames(se) <- paste0("sample", 1:6)
-m <- zinbsurf(se, X="~bio", K = 1, prop_fit = .5, which_assay = 1)
+m <- zinbsurf(se, X="~bio", K = 1, prop_fit = .5, which_assay = 1,
+              BPPARAM=BiocParallel::SerialParam())
 }

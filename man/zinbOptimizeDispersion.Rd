@@ -44,6 +44,7 @@ penalized maximum likelihood on the count matrix given as argument.
 \examples{
 Y = matrix(10, 3, 5)
 m = zinbModel(n=NROW(Y), J=NCOL(Y))
-m = zinbInitialize(m, Y)
-m = zinbOptimizeDispersion(NROW(Y), getMu(m), getLogitPi(m), getEpsilon_zeta(m), Y)
+m = zinbInitialize(m, Y, BPPARAM=BiocParallel::SerialParam())
+m = zinbOptimizeDispersion(NROW(Y), getMu(m), getLogitPi(m),
+     getEpsilon_zeta(m), Y, BPPARAM=BiocParallel::SerialParam())
 }

@@ -360,7 +360,7 @@ We provide an approximate strategy, implemented in the `zinbsurf` function, that
 uses only a random subset of the cells to infer the low dimensional space and 
 subsequently projects all the cells into the inferred space.
 
-```{r}
+```{r surf}
 fluidigm_surf <- zinbsurf(fluidigm, K = 2, epsilon = 1000,
                           prop_fit = 0.5)
 
