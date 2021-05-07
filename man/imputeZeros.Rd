@@ -19,3 +19,10 @@ Given a matrix of counts and a zinb model, this function computes the
 imputed counts under a zero-inflated negative binomial
 (ZINB) model.
 }
+\examples{
+se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+    colData = data.frame(bio = gl(2, 3)))
+m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+    BPPARAM=BiocParallel::SerialParam())
+imputeZeros(m, t(assay(se)))
+}

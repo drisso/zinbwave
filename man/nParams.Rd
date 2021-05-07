@@ -24,3 +24,7 @@ parameters of the model.
 \item \code{nParams,ZinbModel-method}: returns the total number of parameters in the model.
 }}
 
+\examples{
+a <- zinbModel()
+nParams(a)
+}

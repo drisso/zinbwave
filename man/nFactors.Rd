@@ -17,3 +17,7 @@ the number of latent factors
 Given an object that describes a dataset or a model involving latent factors,
 this function returns the number of latent factors.
 }
+\examples{
+a <- zinbModel()
+nFactors(a)
+}

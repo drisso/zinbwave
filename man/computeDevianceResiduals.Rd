@@ -21,3 +21,10 @@ Given a matrix of counts, this function computes the
 deviance residuals under a zero-inflated negative binomial
 (ZINB) model.
 }
+\examples{
+se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+    colData = data.frame(bio = gl(2, 3)))
+m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+    BPPARAM=BiocParallel::SerialParam())
+computeDevianceResiduals(m, t(assay(se)))
+}

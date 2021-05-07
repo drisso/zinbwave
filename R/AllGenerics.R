@@ -6,6 +6,9 @@
 #'   factors
 #' @return the number of latent factors
 #' @export
+#' @examples
+#' a <- zinbModel()
+#' nFactors(a)
 setGeneric("nFactors", function(x) standardGeneric("nFactors"))
 
 #' Returns the matrix of mean parameters
@@ -449,6 +452,9 @@ setGeneric("getEpsilon_zeta",
 #' @param x an object that describes a dataset or a model.
 #' @return the number of features.
 #' @export
+#' @examples
+#' a <- zinbModel()
+#' nFeatures(a)
 setGeneric(
     name = "nFeatures",
     def = function(x) {
@@ -463,6 +469,9 @@ setGeneric(
 #' @param x an object that describes a dataset or a model.
 #' @return the number of samples.
 #' @export
+#' @examples
+#' a <- zinbModel()
+#' nSamples(a)
 setGeneric(
     name = "nSamples",
     def = function(x) {
@@ -477,6 +486,9 @@ setGeneric(
 #' @param model an object that describes a dataset or a model.
 #' @return the total number of parameters of the model.
 #' @export
+#' @examples
+#' a <- zinbModel()
+#' nParams(a)
 setGeneric(
     name = "nParams",
     def = function(model) {
@@ -500,14 +512,23 @@ setGeneric(
 #' @export
 setGeneric("zinbwave", function(Y, ...) standardGeneric("zinbwave"))
 
-#' Compute the AIC of a model given some data
+#' Compute the AIC or BIC of a model given some data
 #'
-#' Given a statistical model and some data, this function computes the AIC
-#' of the model given the data, i.e., the AIC of the data under the model.
+#' Given a statistical model and some data, these functions compute the AIC or
+#' BIC of the model given the data, i.e., the AIC/BIC of the data under the
+#' model.
 #' @param model an object that describes a statistical model.
 #' @param x an object that describes data.
-#' @return the AIC of the model.
+#' @return the AIC/BIC of the model.
 #' @export
+#' @aliases zinbAIC zinbBIC
+#' @examples
+#' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+#'     colData = data.frame(bio = gl(2, 3)))
+#' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+#'     BPPARAM=BiocParallel::SerialParam())
+#' zinbAIC(m, t(assay(se)))
+#' zinbBIC(m, t(assay(se)))
 setGeneric(
     name = "zinbAIC",
     def = function(model, x) {
@@ -515,13 +536,7 @@ setGeneric(
     }
 )
 
-#' Compute the BIC of a model given some data
-#'
-#' Given a statistical model and some data, this function computes the BIC
-#' of the model given the data, i.e., the BIC of the data under the model.
-#' @param model an object that describes a statistical model.
-#' @param x an object that describes data.
-#' @return the BIC of the model.
+#' @rdname zinbAIC
 #' @export
 setGeneric(
     name = "zinbBIC",

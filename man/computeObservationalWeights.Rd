@@ -22,3 +22,10 @@ observational weights of the counts under a zero-inflated negative binomial
 parameters: the mean value and the dispersion of the negative binomial
 distribution, and the probability of the zero component.
 }
+\examples{
+se <- SummarizedExperiment(matrix(rpois(60, lambda=1), nrow=10, ncol=6),
+    colData = data.frame(bio = gl(2, 3)))
+m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+    BPPARAM=BiocParallel::SerialParam())
+computeObservationalWeights(m, assay(se))
+}

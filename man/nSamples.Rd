@@ -16,3 +16,7 @@ the number of samples.
 Given an object that describes a model or a dataset, it returns the number of
 samples.
 }
+\examples{
+a <- zinbModel()
+nSamples(a)
+}

@@ -152,5 +152,5 @@ a <- zinbModel()
 nSamples(a)
 nFeatures(a)
 nFactors(a)
-
+nParams(a)
 }

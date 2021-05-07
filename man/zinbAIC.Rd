@@ -2,12 +2,18 @@
 % Please edit documentation in R/AllGenerics.R, R/helper_methods.R
 \name{zinbAIC}
 \alias{zinbAIC}
+\alias{zinbBIC}
 \alias{zinbAIC,ZinbModel,matrix-method}
-\title{Compute the AIC of a model given some data}
+\alias{zinbBIC,ZinbModel,matrix-method}
+\title{Compute the AIC or BIC of a model given some data}
 \usage{
 zinbAIC(model, x)
 
+zinbBIC(model, x)
+
 \S4method{zinbAIC}{ZinbModel,matrix}(model, x)
+
+\S4method{zinbBIC}{ZinbModel,matrix}(model, x)
 }
 \arguments{
 \item{model}{an object that describes a statistical model.}
@@ -15,14 +21,25 @@ zinbAIC(model, x)
 \item{x}{an object that describes data.}
 }
 \value{
-the AIC of the model.
+the AIC/BIC of the model.
 }
 \description{
-Given a statistical model and some data, this function computes the AIC
-of the model given the data, i.e., the AIC of the data under the model.
+Given a statistical model and some data, these functions compute the AIC or
+BIC of the model given the data, i.e., the AIC/BIC of the data under the
+model.
 }
 \section{Functions}{
 \itemize{
 \item \code{zinbAIC,ZinbModel,matrix-method}: returns the AIC of the ZINB model.
+
+\item \code{zinbBIC,ZinbModel,matrix-method}: returns the BIC of the ZINB model.
 }}
 
+\examples{
+se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+    colData = data.frame(bio = gl(2, 3)))
+m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+    BPPARAM=BiocParallel::SerialParam())
+zinbAIC(m, t(assay(se)))
+zinbBIC(m, t(assay(se)))
+}

@@ -35,6 +35,12 @@ zinb.loglik.matrix <- function(model, x) {
 #' @return the matrix of observational weights computed from the model.
 #' @importFrom stats dnbinom
 #' @export
+#' @examples
+#' se <- SummarizedExperiment(matrix(rpois(60, lambda=1), nrow=10, ncol=6),
+#'     colData = data.frame(bio = gl(2, 3)))
+#' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+#'     BPPARAM=BiocParallel::SerialParam())
+#' computeObservationalWeights(m, assay(se))
 computeObservationalWeights <- function(model, x){
     mu <- getMu(model)
     pi <- getPi(model)
@@ -62,6 +68,12 @@ computeObservationalWeights <- function(model, x){
 #' @param ignoreW logical, if true matrix \code{W} is ignored. Default is TRUE.
 #' @export
 #' @return the matrix of deviance residuals of the model.
+#' @examples
+#' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+#'     colData = data.frame(bio = gl(2, 3)))
+#' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+#'     BPPARAM=BiocParallel::SerialParam())
+#' computeDevianceResiduals(m, t(assay(se)))
 computeDevianceResiduals <- function(model, x, ignoreW = TRUE) {
 
     # this makes a copy of "model" -- is there a more efficient way?
@@ -88,6 +100,12 @@ computeDevianceResiduals <- function(model, x, ignoreW = TRUE) {
 #' @param x the matrix of counts n cells by J genes
 #' @export
 #' @return the matrix of imputed counts.
+#' @examples
+#' se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
+#'     colData = data.frame(bio = gl(2, 3)))
+#' m <- zinbFit(se, X=model.matrix(~bio, data=colData(se)),
+#'     BPPARAM=BiocParallel::SerialParam())
+#' imputeZeros(m, t(assay(se)))
 imputeZeros <- function(model, x) {
     mu <- getMu(model)
     pi <- getPi(model)
