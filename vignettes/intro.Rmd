@@ -328,7 +328,7 @@ The factors inferred in the `zinbwave` model can be added as one of the low dime
 
 We first need to convert the `SingleCellExperiment` object into a `Seurat` object, using Seurat's `CreateSeuratObject` function.
 
-Note that the following workflow has been tested with Seurat's version 3.0.0.
+Note that the following workflow has been tested with Seurat's version 4.0.1.
 
 Here we create a simple Seurat object with the raw data. Please, refer to the Seurat's vignettes for a typical analysis, which includes filtering, normalization, etc.
 
@@ -346,7 +346,7 @@ seu
 
 Finally, we can use the `zinbwave` factors for cluster analysis.
 
-```{r seurat3}
+```{r seurat3, eval=FALSE}
 seu <- FindNeighbors(seu, reduction = "zinbwave",
                      dims = 1:2 #this should match K
                      )
