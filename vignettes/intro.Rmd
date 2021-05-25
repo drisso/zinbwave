@@ -332,17 +332,13 @@ Note that the following workflow has been tested with Seurat's version 4.0.1.
 
 Here we create a simple Seurat object with the raw data. Please, refer to the Seurat's vignettes for a typical analysis, which includes filtering, normalization, etc.
 
-```{r seurat}
+```{r seurat, eval=FALSE}
 library(Seurat)
 
 seu <- as.Seurat(x = fluidigm_zinb, counts = "counts", data = "counts")
 ```
 
 Note that our `zinbwave` factors are automatically in the Seurat object.
-
-```{r seurat2}
-seu
-```
 
 Finally, we can use the `zinbwave` factors for cluster analysis.
 
