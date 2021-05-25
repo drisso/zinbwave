@@ -28,7 +28,6 @@ README[.]md
 ^NAMESPACE,.*[.]txt$
 ^nohup.*$
 ^[.]devel
-^[.]test
 ^[.]check
 ^.*\.Rproj$
 ^\.Rproj\.user$
