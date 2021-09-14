@@ -705,8 +705,8 @@ zinbOptimizeDispersion <- function(J, mu, logitPi, epsilon,
 
     # 1) Find a single dispersion parameter for all counts by 1-dimensional
     # optimization of the likelihood
-    g=optimize(f=zinb.loglik.dispersion, Y=Y, mu=mu,
-               logitPi=logitPi, maximum=TRUE,interval=c(-100,100))
+    g=suppressWarnings(optimize(f=zinb.loglik.dispersion, Y=Y, mu=mu,
+               logitPi=logitPi, maximum=TRUE,interval=c(-100,100)))
 
     zeta <- rep(g$maximum,J)
 
