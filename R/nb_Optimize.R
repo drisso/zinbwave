@@ -389,8 +389,8 @@ nbOptimizeDispersion <- function(J, mu, epsilon,
 
   # 1) Find a single dispersion parameter for all counts by 1-dimensional
   # optimization of the likelihood
-  g=optimize(f=nb.loglik.dispersion, Y=Y, mu=mu,
-             maximum=TRUE,interval=c(-100,100))
+  g=suppressWarnings(optimize(f=nb.loglik.dispersion, Y=Y, mu=mu,
+             maximum=TRUE,interval=c(-100,100)))
 
   zeta <- rep(g$maximum,J)
 
