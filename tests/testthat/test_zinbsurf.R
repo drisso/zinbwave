@@ -8,6 +8,8 @@ se <- SummarizedExperiment(matrix(rpois(300, lambda=5), nrow=10, ncol=30),
 colnames(se) <- paste0("cell", 1:30)
 
 test_that("zinbsurf works with range of proportions", {
+    set.seed(987)
+
     props <- c(.3, .5, .7)
     expect_silent(lapply(props, function(p) {
         m1 <- zinbsurf(se, K=2, which_assay=1, prop_fit = p)
@@ -24,6 +26,7 @@ test_that("one-dimensional W", {
 })
 
 test_that("zinbsurf works with slot counts", {
+    set.seed(987)
 
     cc <- matrix(rpois(300, lambda=5), nrow=10, ncol=30)
     ll <- matrix(rnorm(300), nrow=10, ncol=30)
@@ -53,6 +56,7 @@ test_that("zinbsurf works with slot counts", {
 
 
 test_that("zinbsurf works without slot counts", {
+    set.seed(987)
 
     cc <- matrix(rpois(300, lambda=5), nrow=10, ncol=30)
     ll <- matrix(rnorm(300), nrow=10, ncol=30)
@@ -69,6 +73,7 @@ test_that("zinbsurf works without slot counts", {
 })
 
 test_that("zinbsurf works with subset of genes", {
+    set.seed(987)
 
     cc <- matrix(rpois(300, lambda=5), nrow=10, ncol=30)
     rownames(cc) <- paste0("gene", 1:10)
@@ -103,6 +108,8 @@ test_that("zinbsurf works with subset of genes", {
 })
 
 test_that("zinbsurf fails when it needs to", {
+    set.seed(987)
+
     cc <- matrix(rpois(300, lambda=5), nrow=10, ncol=30)
     wh_genes <- c(rep(TRUE, 2), rep(FALSE, 8))
 
@@ -130,6 +137,7 @@ test_that("zinbsurf fails when it needs to", {
 })
 
 test_that("zinbsurf works with covariates", {
+    set.seed(987)
 
     cc <- matrix(rpois(300, lambda=5), nrow=10, ncol=30)
     rownames(cc) <- paste0("gene", 1:10)

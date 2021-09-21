@@ -4,6 +4,7 @@ set.seed(13124)
 BiocParallel::register(BiocParallel::SerialParam())
 
 test_that("Initialization works without zero inflation", {
+    set.seed(789)
 
     nS <- 100 # sample size
     nG <- 50  # number genes

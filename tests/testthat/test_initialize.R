@@ -4,6 +4,7 @@ set.seed(13124)
 BiocParallel::register(BiocParallel::SerialParam())
 
 test_that("W can be estimated from random matrix (no signal)", {
+    set.seed(789)
 
     nS <- 100 # sample size
     nG <- 50  # number genes
@@ -28,14 +29,15 @@ test_that("W can be estimated from random matrix (no signal)", {
     SE <- SummarizedExperiment(assays = list(counts=my_data$counts),
                               rowDat = data.frame(V),
                               colDat = data.frame(X))
-    expect_warning(sf <- zinbFit(SE,
+    sf <- zinbFit(SE,
                  V = "~V - 1",
-                 K = 2))
+                 K = 2)
 
     round(cor(cbind(W, sf@W)), 2)
 })
 
 test_that("W can be estimated from two-dimensional signal (no signal)", {
+    set.seed(789)
 
     nS <- 100 # sample size
     nG <- 50  # number genes
@@ -69,6 +71,7 @@ test_that("W can be estimated from two-dimensional signal (no signal)", {
 })
 
 test_that("Initialization works with large epsilon", {
+    set.seed(789)
 
     nS <- 100 # sample size
     nG <- 50  # number genes

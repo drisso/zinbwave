@@ -4,6 +4,7 @@ set.seed(13124)
 BiocParallel::register(BiocParallel::SerialParam())
 
 test_that("zinbwave gives same result with / without model fit", {
+    set.seed(654)
     se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                                 colData = data.frame(bio = gl(2, 3)))
 
@@ -18,6 +19,8 @@ test_that("zinbwave gives same result with / without model fit", {
 })
 
 test_that("W is the same in zinbFit and zinbwave", {
+    set.seed(654)
+
     se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                                colData = data.frame(bio = gl(2, 3)))
 
@@ -28,6 +31,8 @@ test_that("W is the same in zinbFit and zinbwave", {
 })
 
 test_that("zinbwave computes residuals and normalized values", {
+    set.seed(654)
+
     se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                                colData = data.frame(bio = gl(2, 3)))
 
@@ -42,6 +47,8 @@ test_that("zinbwave computes residuals and normalized values", {
 })
 
 test_that("zinbwave computes observational weihts", {
+    set.seed(654)
+
     se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                                colData = data.frame(bio = gl(2, 3)))
 
@@ -59,6 +66,8 @@ test_that("zinbwave computes observational weihts", {
 })
 
 test_that("one-dimensional W", {
+    set.seed(654)
+
     se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                                colData = data.frame(bio = gl(2, 3)))
 
@@ -68,6 +77,7 @@ test_that("one-dimensional W", {
 })
 
 test_that("zinbwave works with slot counts", {
+    set.seed(654)
 
     cc <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     ll <- matrix(rnorm(60), nrow=10, ncol=6)
@@ -90,6 +100,7 @@ test_that("zinbwave works with slot counts", {
 
 
 test_that("zinbwave works without slot counts", {
+    set.seed(654)
 
     cc <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     ll <- matrix(rnorm(60), nrow=10, ncol=6)
@@ -103,6 +114,7 @@ test_that("zinbwave works without slot counts", {
 })
 
 test_that("zinbwave works with subset of genes", {
+    set.seed(654)
 
     cc <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     rownames(cc) <- paste0("gene", 1:10)

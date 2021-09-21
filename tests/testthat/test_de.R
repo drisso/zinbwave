@@ -4,6 +4,8 @@ set.seed(13124)
 BiocParallel::register(BiocParallel::SerialParam())
 
 test_that("glm with weights works as expected", {
+    set.seed(456)
+
     se <- SummarizedExperiment(assays = list(counts = matrix(rpois(60, lambda=5), nrow=10, ncol=6)),
                                colData = data.frame(bio = gl(2, 3)))
 

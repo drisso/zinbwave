@@ -4,6 +4,8 @@ set.seed(13124)
 BiocParallel::register(BiocParallel::SerialParam())
 
 test_that("Estimates are reasonable when data is Poisson", {
+    set.seed(987)
+
     counts <- matrix(rpois(10000, lambda=50), nrow=100, ncol=100)
     m1 <- zinbFit(counts, commondispersion = TRUE)
     expect_true(all(getPhi(m1) < 1e-4))
@@ -17,6 +19,8 @@ test_that("Estimates are reasonable when data is Poisson", {
 })
 
 test_that("Estimates are reasonable when data is Negative Binomial", {
+    set.seed(987)
+
     counts <- matrix(rnbinom(10000, mu=50, size = 10), nrow=100, ncol=100)
 
     m1 <- zinbFit(counts, commondispersion = TRUE)

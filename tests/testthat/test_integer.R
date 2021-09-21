@@ -4,6 +4,8 @@ set.seed(13124)
 BiocParallel::register(BiocParallel::SerialParam())
 
 test_that("Non-integer numbers are caught", {
+    set.seed(987)
+
     se <- SummarizedExperiment(matrix(rnorm(60, mean=5), nrow=10, ncol=6),
                                colData = data.frame(bio = gl(2, 3)))
 

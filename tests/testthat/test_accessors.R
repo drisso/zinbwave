@@ -4,6 +4,7 @@ set.seed(13124)
 BiocParallel::register(BiocParallel::SerialParam())
 
 test_that("dimensions", {
+    set.seed(123)
     x <- zinbModel()
     expect_equal(nSamples(x), NROW(getX_mu(x)))
     expect_equal(nFeatures(x), NROW(getV_mu(x)))
@@ -11,6 +12,7 @@ test_that("dimensions", {
 })
 
 test_that("getters return the promised values", {
+    set.seed(123)
     x <- zinbModel()
     expect_equal(getX_mu(x), x@X[, x@which_X_mu, drop=FALSE])
     expect_equal(getX_pi(x), x@X[, x@which_X_pi, drop=FALSE])

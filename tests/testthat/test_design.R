@@ -4,6 +4,7 @@ set.seed(13124)
 BiocParallel::register(BiocParallel::SerialParam())
 
 test_that("getX et al work with/without intercept", {
+    set.seed(456)
 
     bio <- gl(2, 3)
     gc <- rnorm(10)
@@ -28,6 +29,8 @@ test_that("getX et al work with/without intercept", {
 })
 
 test_that("zinbFit works with genewise dispersion", {
+    set.seed(456)
+
     bio <- gl(2, 3)
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     m <- zinbFit(counts, X=model.matrix(~bio), commondispersion = TRUE)
@@ -37,18 +40,24 @@ test_that("zinbFit works with genewise dispersion", {
 })
 
 test_that("zinbFit stops if one gene has only 0 counts", {
+    set.seed(456)
+
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     counts <- rbind(counts, rep(0, ncol(counts)))
     expect_error(zinbFit(counts), "only 0 counts")
 })
 
 test_that("zinbFit stops if one sample has only 0 counts", {
+    set.seed(456)
+
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     counts <- cbind(counts, rep(0, nrow(counts)))
     expect_error(zinbFit(counts), "only 0 counts")
 })
 
 test_that("zinbFit works without X and V", {
+    set.seed(456)
+
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     m1 <- zinbFit(counts, X = matrix(0, ncol=1, nrow=ncol(counts)))
     m2 <- zinbFit(counts, V = matrix(0, ncol=1, nrow=nrow(counts)))
@@ -67,6 +76,8 @@ test_that("zinbFit works without X and V", {
 })
 
 test_that("zinbFit gives the same results with matrix and SE", {
+    set.seed(456)
+
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     se <- SummarizedExperiment(counts)
 
@@ -76,6 +87,8 @@ test_that("zinbFit gives the same results with matrix and SE", {
 })
 
 test_that("zinbFit gives the same results with matrix and formula", {
+    set.seed(456)
+
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     bio <- gl(2, 3)
     gcc <- rnorm(10)
@@ -99,12 +112,16 @@ test_that("zinbFit gives the same results with matrix and formula", {
 })
 
 test_that("zinbFit works with K>0", {
+    set.seed(456)
+
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     m <- zinbFit(counts, K = 2)
     expect_equal(dim(getW(m)), c(nSamples(m), nFactors(m)))
 })
 
 test_that("zinbSim works", {
+    set.seed(456)
+
     a <- zinbModel(n=5, J=10)
     sim <- zinbSim(a)
 
@@ -114,6 +131,8 @@ test_that("zinbSim works", {
 })
 
 test_that("getMu and getPi have the right dimensions", {
+    set.seed(456)
+
     bio <- gl(2, 3)
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
     m <- zinbFit(counts, X=model.matrix(~bio), commondispersion = TRUE)
@@ -129,6 +148,7 @@ test_that("getMu and getPi have the right dimensions", {
 })
 
 test_that("Initialization works", {
+    set.seed(456)
 
     ## no arguments specified
     zinbModel()
