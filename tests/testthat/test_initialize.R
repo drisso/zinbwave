@@ -71,7 +71,7 @@ test_that("W can be estimated from two-dimensional signal (no signal)", {
 })
 
 test_that("Initialization works with large epsilon", {
-    set.seed(789)
+    set.seed(123)
 
     nS <- 100 # sample size
     nG <- 50  # number genes
