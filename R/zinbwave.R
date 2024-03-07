@@ -10,7 +10,7 @@
 #' @param model the zinb model
 #' @param x the matrix of counts
 #' @return the matrix of log-likelihood of the model.
-#' @importFrom stats dnbinom
+#' @
 zinb.loglik.matrix <- function(model, x) {
     mu <- getMu(model)
     theta <- getTheta(model)
@@ -188,6 +188,7 @@ imputeZeros <- function(model, x) {
 #'
 #' @import SummarizedExperiment
 #' @import SingleCellExperiment
+#' @importFrom Matrix t
 #'
 #' @examples
 #' se <- SingleCellExperiment(assays = list(counts = matrix(rpois(60, lambda=5),
@@ -270,24 +271,28 @@ setMethod("zinbwave", "SummarizedExperiment",
               }
 
               if (normalizedValues){
-                  norm <- computeDevianceResiduals(fitted_model, t(dataY),
+                  norm <- computeDevianceResiduals(fitted_model,
+                                                   as.matrix(t(dataY)),
                                                    ignoreW = TRUE)
                   assay(out, "normalizedValues") <- t(norm)
               }
 
               if (residuals){
-                  devres <- computeDevianceResiduals(fitted_model, t(dataY),
+                  devres <- computeDevianceResiduals(fitted_model,
+                                                     as.matrix(t(dataY)),
                                                      ignoreW = FALSE)
                   assay(out, "residuals") <- t(devres)
               }
 
               if (imputedValues){
-                  imputed <- imputeZeros(fitted_model, t(dataY))
+                  imputed <- imputeZeros(fitted_model,
+                                         as.matrix(t(dataY)))
                   assay(out, "imputedValues") <- t(imputed)
               }
 
               if (observationalWeights) {
-                  weights <- computeObservationalWeights(fitted_model, dataY)
+                  weights <- computeObservationalWeights(fitted_model,
+                                                         as.matrix(dataY))
                   dimnames(weights) <- dimnames(out)
                   assay(out, "weights") <- weights
               }

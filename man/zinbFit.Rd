@@ -109,14 +109,14 @@ Currently, if Y is a sparseMatrix, this calls the zinbFit method on
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{SummarizedExperiment}: Y is a
+\item \code{zinbFit(SummarizedExperiment)}: Y is a
 \code{\link[SummarizedExperiment]{SummarizedExperiment}}.
 
-\item \code{matrix}: Y is a matrix of counts (genes in rows).
+\item \code{zinbFit(matrix)}: Y is a matrix of counts (genes in rows).
 
-\item \code{dgCMatrix}: Y is a sparse matrix of counts (genes in rows).
+\item \code{zinbFit(dgCMatrix)}: Y is a sparse matrix of counts (genes in rows).
+
 }}
-
 \examples{
 se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
                            colData = data.frame(bio = gl(2, 3)))

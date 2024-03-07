@@ -30,11 +30,11 @@ model.
 }
 \section{Functions}{
 \itemize{
-\item \code{zinbAIC,ZinbModel,matrix-method}: returns the AIC of the ZINB model.
+\item \code{zinbAIC(model = ZinbModel, x = matrix)}: returns the AIC of the ZINB model.
 
-\item \code{zinbBIC,ZinbModel,matrix-method}: returns the BIC of the ZINB model.
+\item \code{zinbBIC(model = ZinbModel, x = matrix)}: returns the BIC of the ZINB model.
+
 }}
-
 \examples{
 se <- SummarizedExperiment(matrix(rpois(60, lambda=5), nrow=10, ncol=6),
     colData = data.frame(bio = gl(2, 3)))

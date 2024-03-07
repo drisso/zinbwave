@@ -21,9 +21,9 @@ parameters of the model.
 }
 \section{Functions}{
 \itemize{
-\item \code{nParams,ZinbModel-method}: returns the total number of parameters in the model.
-}}
+\item \code{nParams(ZinbModel)}: returns the total number of parameters in the model.
 
+}}
 \examples{
 a <- zinbModel()
 nParams(a)

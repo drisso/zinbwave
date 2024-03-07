@@ -87,10 +87,10 @@ By default \code{zinbsurf} uses all genes to estimate \code{W}.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{SummarizedExperiment}: Y is a
+\item \code{zinbsurf(SummarizedExperiment)}: Y is a
 \code{\link[SummarizedExperiment]{SummarizedExperiment}}.
-}}
 
+}}
 \examples{
 se <- SingleCellExperiment(assays = list(counts = matrix(rpois(60, lambda=5),
                                                          nrow=10, ncol=6)),

@@ -34,9 +34,9 @@ simulate counts from the distribution.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{ZinbModel}: simulate from a ZINB distribution.
-}}
+\item \code{zinbSim(ZinbModel)}: simulate from a ZINB distribution.
 
+}}
 \examples{
 a <- zinbModel(n=5, J=10)
 zinbSim(a)

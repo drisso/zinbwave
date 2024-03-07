@@ -121,75 +121,75 @@ For the full description of the model see the model vignette.
 }
 \section{Methods (by generic)}{
 \itemize{
-\item \code{show}: show useful info on the object.
+\item \code{show(ZinbModel)}: show useful info on the object.
 
-\item \code{nSamples}: returns the number of samples.
+\item \code{nSamples(ZinbModel)}: returns the number of samples.
 
-\item \code{nFeatures}: returns the number of features.
+\item \code{nFeatures(ZinbModel)}: returns the number of features.
 
-\item \code{nFactors}: returns the number of latent factors.
+\item \code{nFactors(ZinbModel)}: returns the number of latent factors.
 
-\item \code{getX_mu}: returns the sample-level design matrix for mu.
+\item \code{getX_mu(ZinbModel)}: returns the sample-level design matrix for mu.
 
-\item \code{getX_pi}: returns the sample-level design matrix for pi.
+\item \code{getX_pi(ZinbModel)}: returns the sample-level design matrix for pi.
 
-\item \code{getV_mu}: returns the gene-level design matrix for mu.
+\item \code{getV_mu(ZinbModel)}: returns the gene-level design matrix for mu.
 
-\item \code{getV_pi}: returns the sample-level design matrix for pi.
+\item \code{getV_pi(ZinbModel)}: returns the sample-level design matrix for pi.
 
-\item \code{getLogMu}: returns the logarithm of the mean of the non-zero
+\item \code{getLogMu(ZinbModel)}: returns the logarithm of the mean of the non-zero
 component.
 
-\item \code{getMu}: returns the mean of the non-zero component.
+\item \code{getMu(ZinbModel)}: returns the mean of the non-zero component.
 
-\item \code{getLogitPi}: returns the logit-probability of zero.
+\item \code{getLogitPi(ZinbModel)}: returns the logit-probability of zero.
 
-\item \code{getPi}: returns the probability of zero.
+\item \code{getPi(ZinbModel)}: returns the probability of zero.
 
-\item \code{getZeta}: returns the log of the inverse of the dispersion
+\item \code{getZeta(ZinbModel)}: returns the log of the inverse of the dispersion
 parameter.
 
-\item \code{getPhi}: returns the dispersion parameter.
+\item \code{getPhi(ZinbModel)}: returns the dispersion parameter.
 
-\item \code{getTheta}: returns the inverse of the dispersion parameter.
+\item \code{getTheta(ZinbModel)}: returns the inverse of the dispersion parameter.
 
-\item \code{getEpsilon_beta_mu}: returns the regularization parameters for
+\item \code{getEpsilon_beta_mu(ZinbModel)}: returns the regularization parameters for
 \code{beta_mu}.
 
-\item \code{getEpsilon_gamma_mu}: returns the regularization parameters for
+\item \code{getEpsilon_gamma_mu(ZinbModel)}: returns the regularization parameters for
 \code{gamma_mu}.
 
-\item \code{getEpsilon_beta_pi}: returns the regularization parameters for
+\item \code{getEpsilon_beta_pi(ZinbModel)}: returns the regularization parameters for
 \code{beta_pi}.
 
-\item \code{getEpsilon_gamma_pi}: returns the regularization parameters for
+\item \code{getEpsilon_gamma_pi(ZinbModel)}: returns the regularization parameters for
 \code{gamma_pi}.
 
-\item \code{getEpsilon_W}: returns the regularization parameters for
+\item \code{getEpsilon_W(ZinbModel)}: returns the regularization parameters for
 \code{W}.
 
-\item \code{getEpsilon_alpha}: returns the regularization parameters for
+\item \code{getEpsilon_alpha(ZinbModel)}: returns the regularization parameters for
 \code{alpha}.
 
-\item \code{getEpsilon_zeta}: returns the regularization parameters for
+\item \code{getEpsilon_zeta(ZinbModel)}: returns the regularization parameters for
 \code{zeta}.
 
-\item \code{getW}: returns the matrix W of inferred sample-level
+\item \code{getW(ZinbModel)}: returns the matrix W of inferred sample-level
 covariates.
 
-\item \code{getBeta_mu}: returns the matrix beta_mu of inferred parameters.
+\item \code{getBeta_mu(ZinbModel)}: returns the matrix beta_mu of inferred parameters.
 
-\item \code{getBeta_pi}: returns the matrix beta_pi of inferred parameters.
+\item \code{getBeta_pi(ZinbModel)}: returns the matrix beta_pi of inferred parameters.
 
-\item \code{getGamma_mu}: returns the matrix gamma_mu of inferred parameters.
+\item \code{getGamma_mu(ZinbModel)}: returns the matrix gamma_mu of inferred parameters.
 
-\item \code{getGamma_pi}: returns the matrix gamma_pi of inferred parameters.
+\item \code{getGamma_pi(ZinbModel)}: returns the matrix gamma_pi of inferred parameters.
 
-\item \code{getAlpha_mu}: returns the matrix alpha_mu of inferred parameters.
+\item \code{getAlpha_mu(ZinbModel)}: returns the matrix alpha_mu of inferred parameters.
 
-\item \code{getAlpha_pi}: returns the matrix alpha_pi of inferred parameters.
+\item \code{getAlpha_pi(ZinbModel)}: returns the matrix alpha_pi of inferred parameters.
+
 }}
-
 \section{Slots}{
 
 \describe{
