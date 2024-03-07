@@ -45,6 +45,7 @@ library(matrixStats)
 library(magrittr)
 library(ggplot2)
 library(biomaRt)
+library(sparseMatrixStats)
 
 # Register BiocParallel Serial Execution
 BiocParallel::register(BiocParallel::SerialParam())

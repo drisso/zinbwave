@@ -44,7 +44,8 @@ Suggests:
     biomaRt,
     BiocStyle,
     Rtsne,
-    DESeq2
+    DESeq2,
+    sparseMatrixStats
 VignetteBuilder: knitr
 LazyData: TRUE
 RoxygenNote: 7.3.1
