@@ -310,6 +310,7 @@ Analogously, we can use the weights in a `DESeq2` analysis by using observation-
 ```{r deseq2}
 library(DESeq2)
 
+counts(fluidigm_zinb) <- as.matrix(counts(fluidigm_zinb))
 dds <- DESeqDataSet(fluidigm_zinb, design = ~ Biological_Condition)
 
 dds <- DESeq(dds, sfType="poscounts", useT=TRUE, minmu=1e-6)
