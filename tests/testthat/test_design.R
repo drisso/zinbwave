@@ -33,10 +33,10 @@ test_that("zinbFit works with genewise dispersion", {
 
     bio <- gl(2, 3)
     counts <- matrix(rpois(60, lambda=5), nrow=10, ncol=6)
-    m <- zinbFit(counts, X=model.matrix(~bio), commondispersion = TRUE)
-    m <- zinbFit(counts, X=model.matrix(~bio), commondispersion = FALSE)
+    expect_no_error(m <- zinbFit(counts, X=model.matrix(~bio), commondispersion = TRUE))
+    expect_no_error(m <- zinbFit(counts, X=model.matrix(~bio), commondispersion = FALSE))
 
-    m <- zinbFit(counts, X=model.matrix(~bio), verbose = TRUE)
+    expect_no_error(m <- zinbFit(counts, X=model.matrix(~bio), verbose = TRUE))
 })
 
 test_that("zinbFit stops if one gene has only 0 counts", {

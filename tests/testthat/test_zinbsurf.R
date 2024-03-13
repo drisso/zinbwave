@@ -149,15 +149,15 @@ test_that("zinbsurf works with covariates", {
                                colData = data.frame(bio = gl(2, 15)),
                                rowData = data.frame(cov = cov))
 
-    expect_silent(m1 <- zinbsurf(se, K=1, prop_fit = .5,
+    expect_no_error(m1 <- zinbsurf(se, K=1, prop_fit = .5,
                                  X = "~bio"))
 
-    expect_silent(m1 <- zinbsurf(se, K=1, prop_fit = .5,
+    expect_no_error(m1 <- zinbsurf(se, K=1, prop_fit = .5,
                                  V = "~cov"))
 
-    expect_silent(m1 <- zinbsurf(se, K=1, prop_fit = .5,
+    expect_no_error(m1 <- zinbsurf(se, K=1, prop_fit = .5,
                                  V = "~cov", X = "~bio"))
 
-    expect_silent(m1 <- zinbsurf(se, K=1, prop_fit = .5,
+    expect_no_error(m1 <- zinbsurf(se, K=1, prop_fit = .5,
                                  zeroinflation = FALSE))
 })
